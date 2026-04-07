@@ -43,10 +43,7 @@ public class ExerciseModel
     }
 
 
-    public void division(float num1, float num2)
-    {
-        Debug.Log(num1/num2);
-    }
+ 
     
     
 }
