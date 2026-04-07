@@ -1,0 +1,30 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Project%20Menu%20Style.uss?fileID=7433441132597879392&amp;guid=506c78db3053df04f85b94a7770ee0d4&amp;type=3#Project Menu Style"/>
+    <ui:VisualElement name="SignupMenu" class="screenContainer screen-container" style="flex-grow: 1; display: none; width: 100%; height: 100%; align-items: stretch;">
+        <ui:Label text="Sign Up Menu" name="Header" class="header" style="-unity-font-style: bold;"/>
+        <ui:VisualElement name="InputFields" class="inputContainer input-container" style="flex-grow: 1; justify-content: flex-start; align-items: center; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; align-self: center; align-content: flex-start; flex-direction: column; width: 100%; height: 100%; -unity-text-align: middle-left;">
+            <ui:TextField label="Email" placeholder-text="filler text" name="SignupEmailInput" class="inputField input-field"/>
+            <ui:TextField label="Username&#10;" placeholder-text="filler text" name="SignupUsernameInput" class="inputField input-field"/>
+            <ui:TextField label="Password" placeholder-text="filler text" name="SignupPasswordInput" class="inputField input-field"/>
+            <ui:Label text="" name="SignupErrorMessage"/>
+            <ui:Button text="Already have an account?" name="RedirectButton" class="button"/>
+            <ui:Button text="Submit&#10;" name="SignUpConfirm" class="button"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="LoginScreen" class="screenContainer screen-container" style="flex-grow: 1; display: none; visibility: visible; align-items: center;">
+        <ui:Label text="Log In " name="Header" class="header" style="align-self: center;"/>
+        <ui:VisualElement name="InputFields" class="inputContainer input-container" style="flex-grow: 1; justify-content: flex-start; align-items: center; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; align-self: center; align-content: flex-start; flex-direction: column;">
+            <ui:TextField label="Email" placeholder-text="filler text" name="LoginEmailInput" class="inputField input-field"/>
+            <ui:TextField label="Password" placeholder-text="filler text" name="LoginPasswordInput" class="inputField input-field"/>
+            <ui:Label text="" name="LoginErrorMessage"/>
+            <ui:Button text="Submit&#10;" name="LoginConfirm" class="button"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="ExerciseSelectionScreen" style="flex-grow: 1; flex-direction: column; display: none;">
+        <ui:ScrollView name="ExerciseScrollView" mode="Horizontal" style="display: flex; width: 100%; height: 100%;"/>
+        <ui:Button text="Add" name="ConfirmAddButton" class="button"/>
+    </ui:VisualElement>
+    <ui:VisualElement name="HomeScreen" style="flex-grow: 1; display: flex; justify-content: center; align-items: center;">
+        <ui:Button text="Start" name="StartingNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>
+    </ui:VisualElement>
+</ui:UXML>

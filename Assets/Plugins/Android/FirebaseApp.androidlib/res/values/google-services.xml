@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
+  <string name="gcm_defaultSenderId" translatable="false">450584319331</string>
+  <string name="google_storage_bucket" translatable="false">calisthenicsapp-3d6fe.firebasestorage.app</string>
+  <string name="project_id" translatable="false">calisthenicsapp-3d6fe</string>
+  <string name="google_api_key" translatable="false">AIzaSyC9KYsaRcNbzEusLeb8HAA98uvCFbqMkz0</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyC9KYsaRcNbzEusLeb8HAA98uvCFbqMkz0</string>
+  <string name="google_app_id" translatable="false">1:450584319331:android:f4ade48468c336b9762f56</string>
+</resources>
