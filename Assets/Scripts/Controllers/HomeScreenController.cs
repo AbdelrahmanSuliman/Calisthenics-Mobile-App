@@ -19,22 +19,14 @@ public class HomeScreenController : MonoBehaviour
 
     private UserModel _currentUser;
 
-    private List<ExerciseModel> _mainModle = new List<ExerciseModel>();
-    
-    private List<ExerciseModel> _pushExercises = new List<ExerciseModel>();
-    private List<ExerciseModel> _pullExercises = new List<ExerciseModel>();
-    private List<ExerciseModel> _legExercises = new List<ExerciseModel>();
+    private List<ExerciseModel> _mainModel = new List<ExerciseModel>();
+
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _db = FirebaseFirestore.DefaultInstance;
         _auth = FirebaseAuth.DefaultInstance;
-        LoadUserData();
-        LoadExercises();
-        
-        Debug.Log("Homescreen Reached");
-
     }
 
     // Update is called once per frame
@@ -62,41 +54,6 @@ public class HomeScreenController : MonoBehaviour
 
     private void LoadExercises()
     {
-        _db.Collection("exercises").GetSnapshotAsync().ContinueWithOnMainThread(task =>
-        {
-            if (task.IsFaulted)
-            {
-                Debug.LogError("Failed to fetch exercises: " + task.Exception);
-                return;
-            }
-
-            _pushExercises.Clear();
-            _pullExercises.Clear();
-            _legExercises.Clear();
-
-            foreach (DocumentSnapshot doc in task.Result.Documents)
-            {
-                ExerciseModel exercise = doc.ConvertTo<ExerciseModel>();
-                exercise.Id = doc.Id; 
-
-                switch (exercise.SkillPath)
-                {
-                    case "Push":
-                        _pushExercises.Add(exercise);
-                        break;
-                    case "Pull":
-                        _pullExercises.Add(exercise);
-                        break;
-                    case "Legs":
-                        _legExercises.Add(exercise);
-                        break;
-        
-                }
-
-                Debug.Log(exercise.ToString());
-            }
-
-            Debug.Log($"Loaded: {_pushExercises.Count} Push, {_pullExercises.Count} Pull, {_legExercises.Count} Legs.");
-        });
+      
     }
 }
