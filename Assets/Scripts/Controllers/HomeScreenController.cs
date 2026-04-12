@@ -7,12 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public enum NodeStatus
-{
-    Completed,
-    Current,
-    Locked
-};
+
 
 
 public class HomeScreenController : MonoBehaviour
@@ -43,7 +38,9 @@ public class HomeScreenController : MonoBehaviour
         var pushNode = root.Q<Button>("PushNode");
         var pullNode = root.Q<Button>("PullNode");
         var legsNode = root.Q<Button>("LegsNode");
-        
+
+        var allNodes = root.Query<Button>(className: "tree-node");
+
     }
 
 

@@ -25,11 +25,17 @@
         <ui:Button text="Add" name="ConfirmAddButton" class="button"/>
     </ui:VisualElement>
     <ui:VisualElement name="HomeScreen" class="screen-container" style="flex-grow: 1; display: flex; justify-content: center; align-items: center; align-self: center;">
-        <ui:Button text="Push" name="PushNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px; margin-bottom: 0;"/>
-        <ui:VisualElement name="NodeContainer" style="flex-grow: 1; background-size: 100% 34%; height: auto; align-content: flex-start; align-self: center; justify-content: space-evenly; flex-direction: row; align-items: center; flex-shrink: 1; width: 1085px;">
-            <ui:Button text="Pull" name="PullNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>
-            <ui:Button text="Start" name="StartingNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>
-            <ui:Button text="Legs" name="LegsNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>
+        <ui:VisualElement name="TreeContainer" style="flex-grow: 1; background-size: 100% 34%; height: auto; align-content: flex-start; align-self: center; justify-content: space-evenly; flex-direction: row; align-items: center; flex-shrink: 1; width: 1085px;">
+            <ui:VisualElement name="PullNodeContainer" class="NodeContainer" style="flex-grow: 1;">
+                <ui:Button text="Pull" name="PullNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="PushNodeContainer" class="NodeContainer" style="flex-grow: 1; flex-direction: column-reverse; justify-content: space-around; align-items: center; align-self: center; height: 848px;">
+                <ui:Button text="Start" name="StartingNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>
+                <ui:Button text="Push" name="PushNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px; margin-bottom: 0;"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="LegsNodeContainer" class="NodeContainer" style="flex-grow: 1;">
+                <ui:Button text="Legs" name="LegsNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

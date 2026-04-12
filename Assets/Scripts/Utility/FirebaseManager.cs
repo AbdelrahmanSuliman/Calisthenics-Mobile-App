@@ -27,11 +27,8 @@ public class FirebaseManager : MonoBehaviour
 
     private void OnEnable()
     {
-        if (Instance == null)
-        {
-            Debug.Log("Firebase Instance is null");
-            return;
-        }
+        if (Instance != null) return;
+        Debug.Log("Firebase Instance is null");
     }
 
     private void InitializeFirebase()
