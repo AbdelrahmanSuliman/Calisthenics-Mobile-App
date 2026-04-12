@@ -8,11 +8,12 @@ using UnityEngine.UIElements;
 
 public class ExerciseSelectionController : MonoBehaviour
 {
-    private FirebaseFirestore _db;
-    private FirebaseAuth _auth;
 
     private int exerciseCount;
     private UIManager _uiManager;
+    
+    private FirebaseFirestore _db;
+    private FirebaseAuth _auth;
 
     private ScrollView _exerciseScrollView;
     private Button _confirmAddBtn;
@@ -23,8 +24,8 @@ public class ExerciseSelectionController : MonoBehaviour
     private void OnEnable()
     {
         exerciseCount = 0;
-        _db = FirebaseFirestore.DefaultInstance;
-        _auth = FirebaseAuth.DefaultInstance;
+        _db = FirebaseManager.Instance.Db;
+        _auth = FirebaseManager.Instance.Auth;
         _uiManager = GetComponent<UIManager>();
 
         var root = GetComponent<UIDocument>().rootVisualElement;

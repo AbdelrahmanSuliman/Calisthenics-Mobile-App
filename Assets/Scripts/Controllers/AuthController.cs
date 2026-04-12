@@ -14,8 +14,8 @@ public class AuthController : MonoBehaviour
     {
         
         //initialize firebase
-        _auth = FirebaseAuth.DefaultInstance;
-        _db = FirebaseFirestore.DefaultInstance;
+        _auth = FirebaseManager.Instance.Auth;
+        _db = FirebaseManager.Instance.Db;
 
         //grab the UI manager component
         _uiManager = GetComponent<UIManager>();

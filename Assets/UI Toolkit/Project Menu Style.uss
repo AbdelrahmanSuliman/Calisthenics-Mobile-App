@@ -82,6 +82,7 @@
     padding-right: 0;
     padding-bottom: 0;
     padding-left: 0;
+    margin-top: 120px;
 }
 
 .header {
