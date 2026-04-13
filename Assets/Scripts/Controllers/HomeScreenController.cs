@@ -5,7 +5,7 @@ using Firebase.Extensions;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Linq;
-
+using Mono.Cecil;
 
 
 public class HomeScreenController : MonoBehaviour
@@ -183,9 +183,14 @@ private VisualElement BuildExerciseCard(string exName, string exDescription, str
     gifBox.style.borderBottomLeftRadius = 20;
     gifBox.style.borderBottomRightRadius = 20;
 
-    var gifLabel = new Label("GIF");
-    gifLabel.style.fontSize = 30;
-    gifBox.Add(gifLabel);
+    Texture2D loadedTexture = Resources.Load<Texture2D>(exGifUrl);
+    gifBox.style.backgroundImage = new StyleBackground(loadedTexture);
+    
+    //this makes sure that the image fills the background entirely as well as making sure the image is centered
+    gifBox.style.backgroundSize = new BackgroundSize(BackgroundSizeType.Cover);
+    gifBox.style.backgroundPositionX = new BackgroundPosition(BackgroundPositionKeyword.Center);
+    gifBox.style.backgroundPositionY = new BackgroundPosition(BackgroundPositionKeyword.Center);
+    
     card.Add(gifBox);
     
     return card;
