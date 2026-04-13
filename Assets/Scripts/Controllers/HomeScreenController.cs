@@ -18,6 +18,11 @@ public class HomeScreenController : MonoBehaviour
     private VisualElement _activePopup;  
     private VisualElement _exerciseContainer;
     private Label _popupTitleLabel;
+    private string _currentOpenPath = "";
+
+    private VisualElement _logsPopup;
+    private Label _logsTitleLabel;
+    private ScrollView _logsContainer;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,7 +36,7 @@ public class HomeScreenController : MonoBehaviour
         _auth = FirebaseManager.Instance.Auth;
         LoadUserData();
         LoadExercises();
-        BuildPopup();
+        BuildRoadMapPopup();
 
         var uiDoc = GetComponent<UIDocument>();
 
@@ -40,9 +45,9 @@ public class HomeScreenController : MonoBehaviour
         var pullNode = root.Q<Button>("PullNode");
         var legsNode = root.Q<Button>("LegsNode");
 
-        pushNode.clicked += () => PopulatePopup("PUSH");
-        pullNode.clicked += () => PopulatePopup("PULL");
-        legsNode.clicked += () => PopulatePopup("LEGS");
+        pushNode.clicked += () => PopulateRoadMapPopup("PUSH");
+        pullNode.clicked += () => PopulateRoadMapPopup("PULL");
+        legsNode.clicked += () => PopulateRoadMapPopup("LEGS");
     }
 
 
@@ -51,9 +56,9 @@ public class HomeScreenController : MonoBehaviour
     {
         
     }
-
+    
     //this populates the popup with values so the user does not create a new popup everytime the button is clicked :>
-    private void PopulatePopup(string skillPath)
+    private void PopulateRoadMapPopup(string skillPath)
     {
         if (_allSkillPaths.Count == 0) return;
         
@@ -61,6 +66,8 @@ public class HomeScreenController : MonoBehaviour
         var selectedPath = _allSkillPaths.FirstOrDefault(p => p.PathType == skillPath);
         
         _exerciseContainer.Clear();
+        
+        
         
         if (selectedPath != null)
         {
@@ -73,9 +80,10 @@ public class HomeScreenController : MonoBehaviour
 
         _activePopup.style.display = DisplayStyle.Flex;
     }
-    
-    //this runs only once and makes sure the popup is built
-    private void BuildPopup()
+
+ 
+    //this runs only once and makes sure the roadmap popup is built
+    private void BuildRoadMapPopup()
 {
     _activePopup = new VisualElement();
     _activePopup.style.position = Position.Absolute;
@@ -136,65 +144,127 @@ public class HomeScreenController : MonoBehaviour
     GetComponent<UIDocument>().rootVisualElement.Add(_activePopup);
 }
 
-private VisualElement BuildExerciseCard(string exName, string exDescription, string exGifUrl)
-{
-    var card = new VisualElement();
-    card.style.height = StyleKeyword.Auto; 
-    card.style.width = Length.Percent(100);
-    card.style.flexDirection = FlexDirection.Row;
-    card.style.paddingTop = 40;
-    card.style.paddingBottom = 40;
-    card.style.paddingLeft = 30;
-    card.style.paddingRight = 30;
-    card.style.marginBottom = 30;
-    card.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f);
-    card.style.borderTopLeftRadius = 25;
-    card.style.borderTopRightRadius = 25;
-    card.style.borderBottomLeftRadius = 25;
-    card.style.borderBottomRightRadius = 25;
+    private void BuildLogsPopup()
+    {
+        _logsPopup = new VisualElement();
+        _logsPopup.style.position = Position.Absolute;
+        _logsPopup.style.width = Length.Percent(100);
+        _logsPopup.style.height = Length.Percent(100);
+        
+        _logsPopup.style.backgroundColor = new Color(0, 0, 0, 0.92f);
+        _logsPopup.style.justifyContent = Justify.Center;
+        _logsPopup.style.alignItems = Align.Center;
 
-    var textColumn = new VisualElement();
-    textColumn.style.flexGrow = 1;
-    textColumn.style.marginRight = 20;
-    
-    var nameLabel = new Label(exName);
-    nameLabel.style.fontSize = 55;
-    nameLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
-    nameLabel.style.color = Color.white;
-    nameLabel.style.marginBottom = 10;
-    textColumn.Add(nameLabel);
 
-    var descLabel = new Label(exDescription);
-    descLabel.style.whiteSpace = WhiteSpace.Normal;
-    descLabel.style.fontSize = 35; 
-    descLabel.style.color = new Color(0.85f, 0.85f, 0.85f);
-    textColumn.Add(descLabel);
+        var window = new VisualElement();
+        window.style.width = Length.Percent(95);
+        window.style.height = Length.Percent(90);
+        window.style.backgroundColor = new Color(0.12f, 0.12f, 0.12f);
+        window.style.borderTopLeftRadius = 40;
+        window.style.borderTopRightRadius = 40;
+        
+        window.style.paddingTop = 60; 
+        window.style.paddingBottom = 40;
+        window.style.paddingLeft = 40;
+        window.style.paddingRight = 40;
+        _logsPopup.Add(window);
+        
+        var header = new VisualElement();
+        header.style.flexDirection = FlexDirection.Row;
+        header.style.justifyContent = Justify.SpaceBetween;
+        header.style.alignItems = Align.Center;
+        header.style.marginBottom = 40;
+        window.Add(header);
+        
+        _logsTitleLabel = new Label($"Skill Path"); 
+        _logsTitleLabel.style.fontSize = 80;
+        _logsTitleLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+        _logsTitleLabel.style.color = Color.white;
+        header.Add(_logsTitleLabel);
+        
+        var closeButton = new Button(() => {
+            _logsPopup.style.display = DisplayStyle.None;
+        });
+        closeButton.text = "X";
+        closeButton.style.width = 120; 
+        closeButton.style.height = 120;
+        closeButton.style.fontSize = 50;
+        closeButton.style.backgroundColor = new Color(0.9f, 0.2f, 0.2f);
+        closeButton.style.color = Color.white;
+        closeButton.style.borderTopLeftRadius = 60; 
+        closeButton.style.borderTopRightRadius = 60;
+        closeButton.style.borderBottomLeftRadius = 60;
+        closeButton.style.borderBottomRightRadius = 60;
+        header.Add(closeButton);
+        
+        _logsContainer = new ScrollView();
+        _logsContainer.style.flexGrow = 1;
+        window.Add(_logsContainer);
+        
+        _logsPopup.style.display = DisplayStyle.None;
+        GetComponent<UIDocument>().rootVisualElement.Add(_logsPopup);
+    }
     
-    card.Add(textColumn);
 
-    var gifBox = new VisualElement();
-    gifBox.style.width = 200;
-    gifBox.style.height = 200;
-    gifBox.style.backgroundColor = new Color(0.1f, 0.1f, 0.1f);
-    gifBox.style.justifyContent = Justify.Center;
-    gifBox.style.alignItems = Align.Center;
-    gifBox.style.borderTopLeftRadius = 20;
-    gifBox.style.borderTopRightRadius = 20;
-    gifBox.style.borderBottomLeftRadius = 20;
-    gifBox.style.borderBottomRightRadius = 20;
+    private VisualElement BuildExerciseCard(string exName, string exDescription, string exGifUrl)
+    {
+        var card = new VisualElement();
+        card.style.height = StyleKeyword.Auto; 
+        card.style.width = Length.Percent(100);
+        card.style.flexDirection = FlexDirection.Row;
+        card.style.paddingTop = 40;
+        card.style.paddingBottom = 40;
+        card.style.paddingLeft = 30;
+        card.style.paddingRight = 30;
+        card.style.marginBottom = 30;
+        card.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f);
+        card.style.borderTopLeftRadius = 25;
+        card.style.borderTopRightRadius = 25;
+        card.style.borderBottomLeftRadius = 25;
+        card.style.borderBottomRightRadius = 25;
 
-    Texture2D loadedTexture = Resources.Load<Texture2D>(exGifUrl);
-    gifBox.style.backgroundImage = new StyleBackground(loadedTexture);
-    
-    //this makes sure that the image fills the background entirely as well as making sure the image is centered
-    gifBox.style.backgroundSize = new BackgroundSize(BackgroundSizeType.Cover);
-    gifBox.style.backgroundPositionX = new BackgroundPosition(BackgroundPositionKeyword.Center);
-    gifBox.style.backgroundPositionY = new BackgroundPosition(BackgroundPositionKeyword.Center);
-    
-    card.Add(gifBox);
-    
-    return card;
-}
+        var textColumn = new VisualElement();
+        textColumn.style.flexGrow = 1;
+        textColumn.style.marginRight = 20;
+        
+        var nameLabel = new Label(exName);
+        nameLabel.style.fontSize = 55;
+        nameLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+        nameLabel.style.color = Color.white;
+        nameLabel.style.marginBottom = 10;
+        textColumn.Add(nameLabel);
+
+        var descLabel = new Label(exDescription);
+        descLabel.style.whiteSpace = WhiteSpace.Normal;
+        descLabel.style.fontSize = 35; 
+        descLabel.style.color = new Color(0.85f, 0.85f, 0.85f);
+        textColumn.Add(descLabel);
+        
+        card.Add(textColumn);
+
+        var gifBox = new VisualElement();
+        gifBox.style.width = 200;
+        gifBox.style.height = 200;
+        gifBox.style.backgroundColor = new Color(0.1f, 0.1f, 0.1f);
+        gifBox.style.justifyContent = Justify.Center;
+        gifBox.style.alignItems = Align.Center;
+        gifBox.style.borderTopLeftRadius = 20;
+        gifBox.style.borderTopRightRadius = 20;
+        gifBox.style.borderBottomLeftRadius = 20;
+        gifBox.style.borderBottomRightRadius = 20;
+
+        Texture2D loadedTexture = Resources.Load<Texture2D>(exGifUrl);
+        gifBox.style.backgroundImage = new StyleBackground(loadedTexture);
+        
+        //this makes sure that the image fills the background entirely as well as making sure the image is centered
+        gifBox.style.backgroundSize = new BackgroundSize(BackgroundSizeType.Cover);
+        gifBox.style.backgroundPositionX = new BackgroundPosition(BackgroundPositionKeyword.Center);
+        gifBox.style.backgroundPositionY = new BackgroundPosition(BackgroundPositionKeyword.Center);
+        
+        card.Add(gifBox);
+        
+        return card;
+    }
     private void LoadUserData()
     {
         string userId = _auth.CurrentUser.UserId;
