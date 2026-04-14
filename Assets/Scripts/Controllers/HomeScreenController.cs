@@ -5,7 +5,7 @@ using Firebase.Extensions;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Linq;
-using Mono.Cecil;
+using System;
 
 
 public class HomeScreenController : MonoBehaviour
@@ -34,9 +34,13 @@ public class HomeScreenController : MonoBehaviour
     {
         _db = FirebaseManager.Instance.Db;
         _auth = FirebaseManager.Instance.Auth;
+        // preload all data we need
         LoadUserData();
         LoadExercises();
+        
+        //make sure UI components are built beforehand
         BuildRoadMapPopup();
+        BuildLogsPopup();
 
         var uiDoc = GetComponent<UIDocument>();
 
@@ -59,54 +63,70 @@ public class HomeScreenController : MonoBehaviour
     
     //this populates the popup with values so the user does not create a new popup everytime the button is clicked :>
     private void PopulateRoadMapPopup(string skillPath)
+{
+    
+    // Ignore case sensitivity ("PUSH" == "Push")
+    var selectedPath = _allSkillPaths.FirstOrDefault(p => 
+        string.Equals(p.PathType, skillPath, StringComparison.OrdinalIgnoreCase));
+    
+    if (selectedPath == null)
     {
-        if (_allSkillPaths.Count == 0) return;
-        
-        //nice way of getting the skill path we need
-        var selectedPath = _allSkillPaths.FirstOrDefault(p => p.PathType == skillPath);
-        
-        _exerciseContainer.Clear();
-
-        _db.Collection("workout_logs")
-            .WhereEqualTo("UserId", _auth.CurrentUser.UserId)
-            .GetSnapshotAsync().ContinueWithOnMainThread(task =>
-            {
-                if (task.IsFaulted) return;
-
-                //this will keep track of each exercise's highest reps
-                Dictionary<string, int> highestRepsMap = new Dictionary<string, int>();
-
-                foreach (var doc in task.Result.Documents)
-                {
-                    var log = doc.ConvertTo<WorkoutLogModel>();
-                    if (!highestRepsMap.ContainsKey(log.ExerciseId) || log.Reps > highestRepsMap[log.ExerciseId])
-                    {
-                        highestRepsMap[log.ExerciseId] = log.Reps;
-                    }
-                }
-                
-                var sortedExercises = selectedPath.Exercises.OrderBy(e => e.Order).ToList();
-                bool previousCompleted = true;
-                
-                foreach (var exercise in sortedExercises)
-                {
-                    //if we find no reps we just automatically go with 0 
-                    int bestReps = highestRepsMap.GetValueOrDefault(exercise.Id, 0);
-                    
-                    bool isCompleted = bestReps >= 8;
-                    bool isInProgress = !isCompleted && previousCompleted;
-
-                    VisualElement card = BuildExerciseCard(exercise, isCompleted, isInProgress, bestReps);
-                    _exerciseContainer.Add(card);
-
-                    previousCompleted = isCompleted;
-                }
-
-            });
-        
-       
-        _activePopup.style.display = DisplayStyle.Flex;
+        Debug.LogError($"Could not find a SkillPath in Firestore matching '{skillPath}'");
+        return;
     }
+
+    _currentOpenPath = skillPath;
+    _exerciseContainer.Clear();
+    
+    var loadingLabel = new Label("Loading your progress...");
+    loadingLabel.style.fontSize = 45;
+    loadingLabel.style.color = Color.white;
+    loadingLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
+    loadingLabel.style.marginTop = 50;
+    _exerciseContainer.Add(loadingLabel);
+
+    _activePopup.style.display = DisplayStyle.Flex;
+
+    _db.Collection("workout_logs")
+        .WhereEqualTo("UserId", _auth.CurrentUser.UserId)
+        .GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            _exerciseContainer.Clear();
+
+            if (task.IsFaulted)
+            {
+                Debug.LogError($"Firebase Log Fetch Failed: {task.Exception}");
+                return;
+            }
+
+            Dictionary<string, int> highestRepsMap = new Dictionary<string, int>();
+
+            foreach (var doc in task.Result.Documents)
+            {
+                var log = doc.ConvertTo<WorkoutLogModel>();
+                if (!highestRepsMap.ContainsKey(log.ExerciseId) || log.Reps > highestRepsMap[log.ExerciseId])
+                {
+                    highestRepsMap[log.ExerciseId] = log.Reps;
+                }
+            }
+            
+            var sortedExercises = selectedPath.Exercises.OrderBy(e => e.Order).ToList();
+            bool previousCompleted = true;
+            
+            foreach (var exercise in sortedExercises)
+            {
+                int bestReps = highestRepsMap.GetValueOrDefault(exercise.Id, 0);
+                
+                bool isCompleted = bestReps >= 8;
+                bool isInProgress = !isCompleted && previousCompleted;
+
+                VisualElement card = BuildExerciseCard(exercise, isInProgress, isCompleted, bestReps);
+                _exerciseContainer.Add(card);
+
+                previousCompleted = isCompleted;
+            }
+        });
+}
 
  
     //this runs only once and makes sure the roadmap popup is built
@@ -329,7 +349,137 @@ public class HomeScreenController : MonoBehaviour
         
         return card;
     }
+
+    private void OpenLogsHistory(ExerciseModel exercise)
+    {
+        _logsContainer.Clear();
+
+        var loadingLabel = new Label("Fetching logs...");
+        loadingLabel.style.fontSize = 40;
+        loadingLabel.style.color = Color.gray;
+        _logsContainer.Add(loadingLabel);
+
+        _logsPopup.style.display = DisplayStyle.Flex;
+
+        //make sure we fetch the newest logs first
+        _db.Collection("workout_logs")
+            .WhereEqualTo("UserId", _auth.CurrentUser.UserId)
+            .WhereEqualTo("ExerciseId", exercise.Id)
+            .OrderByDescending("Date")
+            .GetSnapshotAsync().ContinueWithOnMainThread(task => 
+            {
+                _logsContainer.Clear(); 
+
+                if (task.IsFaulted)
+                {
+                    _logsContainer.Add(new Label("Failed to load history."));
+                    Debug.LogError(task.Exception);
+                    return;
+                }
+
+                if (!task.Result.Documents.Any())
+                {
+                    var emptyLabel = new Label("No logs yet");
+                    emptyLabel.style.fontSize = 40;
+                    emptyLabel.style.color = Color.gray;
+                    _logsContainer.Add(emptyLabel);
+                }
+                else
+                {
+                    foreach (var doc in task.Result.Documents)
+                    {
+                        var log = doc.ConvertTo<WorkoutLogModel>();
+                        _logsContainer.Add(BuildLogEntry(log));
+                    }
+                }
+
+                _logsContainer.Add(BuildNewLogInputArea(exercise));
+            });
+    }
+    private VisualElement BuildLogEntry(WorkoutLogModel log)
+    {
+        var row = new VisualElement();
+        row.style.flexDirection = FlexDirection.Row;
+        row.style.justifyContent = Justify.SpaceBetween;
+        row.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f);
+        row.style.paddingBottom = 20;
+        row.style.paddingLeft = 20;
+        row.style.paddingRight = 20;
+        row.style.paddingTop = 20;
+        row.style.marginBottom = 15;
+        row.style.borderTopLeftRadius = 15;
+        row.style.borderTopRightRadius = 15;
+        row.style.borderBottomLeftRadius = 15;
+        row.style.borderBottomRightRadius = 15;
+
+        DateTime date = log.Date.ToDateTime();
+        
+        var dateLabel = new Label(date.ToString("MMM dd, yyyy - HH:mm"));
+        dateLabel.style.fontSize = 35;
+        dateLabel.style.color = Color.white;
+        row.Add(dateLabel);
+
+        var repsLabel = new Label($"{log.Reps} Reps");
+        repsLabel.style.fontSize = 40;
+        repsLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+        repsLabel.style.color = log.Reps >= 8 ? new Color(0.3f, 0.8f, 0.3f) : Color.white;
+        row.Add(repsLabel);
+
+        return row;
+    }
     
+    private VisualElement BuildNewLogInputArea(ExerciseModel exercise)
+    {
+        var inputContainer = new VisualElement();
+        inputContainer.style.flexDirection = FlexDirection.Row;
+        inputContainer.style.justifyContent = Justify.Center;
+        inputContainer.style.marginTop = 40;
+        inputContainer.style.paddingBottom = 20;
+        inputContainer.style.paddingLeft = 20;
+        inputContainer.style.paddingRight = 20;
+        inputContainer.style.paddingTop = 20;
+        inputContainer.style.backgroundColor = new Color(0.15f, 0.15f, 0.15f);
+        inputContainer.style.borderTopLeftRadius = 20;
+        inputContainer.style.borderTopRightRadius = 20;
+        inputContainer.style.borderBottomLeftRadius = 20;
+        inputContainer.style.borderBottomRightRadius = 20;
+
+        var repsInput = new TextField();
+        repsInput.style.width = 200;
+        repsInput.style.fontSize = 50;
+        repsInput.style.backgroundColor = Color.white;
+        repsInput.style.color = Color.black;
+        inputContainer.Add(repsInput);
+
+        var logBtn = new Button();
+        logBtn.text = "Save Logs";
+        logBtn.style.fontSize = 40;
+        logBtn.style.marginLeft = 20;
+        logBtn.style.paddingLeft = 20;
+        logBtn.style.paddingRight = 20;
+        logBtn.style.backgroundColor = new Color(0.2f, 0.6f, 0.2f);
+        
+        logBtn.clicked += () => 
+        {
+            if (int.TryParse(repsInput.value, out int repsLogged))
+            {
+                logBtn.SetEnabled(false);
+                logBtn.text = "Saving...";
+                
+                WorkoutLogModel newLog = new WorkoutLogModel(_auth.CurrentUser.UserId, exercise.Id, repsLogged);
+                _db.Collection("workout_logs").AddAsync(newLog).ContinueWithOnMainThread(task =>
+                {
+                    if (task.IsFaulted) return;
+                    
+                    OpenLogsHistory(exercise);
+                    PopulateRoadMapPopup(_currentOpenPath); 
+                });
+            }
+        };
+
+        inputContainer.Add(logBtn);
+        return inputContainer;
+    }
     
     private void LoadUserData()
     {

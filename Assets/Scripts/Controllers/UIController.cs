@@ -50,6 +50,11 @@ public class UIManager : MonoBehaviour
         ShowScreen(_loginScreen);
     }
 
+    public void OpenSignupPage()
+    {
+        ShowScreen(_signupScreen);
+    }
+
     public void OpenExerciseSelectionPage()
     {
         ShowScreen(_exerciseSelectionScreen);

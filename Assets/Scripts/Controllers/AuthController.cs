@@ -33,8 +33,9 @@ public class AuthController : MonoBehaviour
         
         //access buttons
         var signupBtn = root.Q<Button>("SignUpConfirm");
-        var redirectBtn = root.Q<Button>("RedirectButton");
+        var redirectBtnSignup = root.Q<Button>("RedirectButton");
         var loginBtn = root.Q<Button>("LoginConfirm");
+        var redirectBtnLogin = root.Q<Button>("RedirectButtonLogin");
         
         
         //access error messages
@@ -53,10 +54,15 @@ public class AuthController : MonoBehaviour
             LogIn(loginEmailInput.value, loginPasswordInput.value, loginErrorMessage);
         };
 
-        redirectBtn.clicked += () =>
+        redirectBtnSignup.clicked += () =>
         {
             _uiManager.OpenLoginPage();
         };
+        
+        if (redirectBtnLogin != null)
+        {
+            redirectBtnLogin.clicked += () => _uiManager.OpenSignupPage(); 
+        }
 
     }
 
@@ -142,6 +148,7 @@ public class AuthController : MonoBehaviour
 
         });
     }
+    
 
  
     // Start is called once before the first execution of Update after the MonoBehaviour is created
