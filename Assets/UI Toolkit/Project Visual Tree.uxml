@@ -11,7 +11,7 @@
             <ui:Button text="Submit&#10;" name="SignUpConfirm" class="button"/>
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:VisualElement name="LoginScreen" class="screenContainer screen-container" style="flex-grow: 1; display: flex; visibility: visible; align-items: center;">
+    <ui:VisualElement name="LoginScreen" class="screenContainer screen-container" style="flex-grow: 1; display: none; visibility: visible; align-items: center;">
         <ui:Label text="Log In " name="Header" class="header" style="align-self: center;"/>
         <ui:VisualElement name="InputFields" class="inputContainer input-container" style="flex-grow: 1; justify-content: flex-start; align-items: center; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; align-self: center; align-content: flex-start; flex-direction: column;">
             <ui:TextField label="Email" placeholder-text="filler text" name="LoginEmailInput" class="inputField input-field"/>
@@ -25,7 +25,8 @@
         <ui:ScrollView name="ExerciseScrollView" mode="Horizontal" style="display: flex; width: 100%; height: 100%;"/>
         <ui:Button text="Add" name="ConfirmAddButton" class="button"/>
     </ui:VisualElement>
-    <ui:VisualElement name="HomeScreen" class="screen-container" style="flex-grow: 1; display: none; justify-content: center; align-items: center; align-self: center;">
+    <ui:VisualElement name="HomeScreen" class="screen-container" style="flex-grow: 1; display: flex; justify-content: center; align-items: center; align-self: center;">
+        <ui:Button text="Sign Out" name="SignOutButton" class="button" style="align-items: flex-end; align-self: flex-end;"/>
         <ui:VisualElement name="TreeContainer" style="flex-grow: 1; background-size: 100% 34%; height: auto; align-content: flex-start; align-self: center; justify-content: space-evenly; flex-direction: row; align-items: center; flex-shrink: 1; width: 1085px;">
             <ui:VisualElement name="PullNodeContainer" class="NodeContainer" style="flex-grow: 1;">
                 <ui:Button text="Pull" name="PullNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>

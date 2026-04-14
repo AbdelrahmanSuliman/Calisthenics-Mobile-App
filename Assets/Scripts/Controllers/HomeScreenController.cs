@@ -12,8 +12,8 @@ public class HomeScreenController : MonoBehaviour
 {
     private FirebaseFirestore _db;
     private FirebaseAuth _auth;
+    private UIManager _uiManager;
 
-    private UserModel _currentUser;
     private List<SkillPathModel> _allSkillPaths = new List<SkillPathModel>();
     private VisualElement _activePopup;  
     private VisualElement _exerciseContainer;
@@ -48,6 +48,17 @@ public class HomeScreenController : MonoBehaviour
         var pushNode = root.Q<Button>("PushNode");
         var pullNode = root.Q<Button>("PullNode");
         var legsNode = root.Q<Button>("LegsNode");
+
+        var signOutBtn = root.Q<Button>("SignOutButton");
+
+        signOutBtn.clicked += () =>
+        {
+            _auth.SignOut();
+            _currentOpenPath = "";
+            _activePopup.style.display = DisplayStyle.None;
+            _logsPopup.style.display = DisplayStyle.None;
+            _uiManager.OpenSignupPage();
+        };
 
         pushNode.clicked += () => PopulateRoadMapPopup("PUSH");
         pullNode.clicked += () => PopulateRoadMapPopup("PULL");
@@ -333,9 +344,11 @@ public class HomeScreenController : MonoBehaviour
         gifBox.style.borderBottomLeftRadius = 20;
         gifBox.style.borderBottomRightRadius = 20;
 
+        
         //this makes sure that the image fills the background entirely as well as making sure the image is centered
         if (!string.IsNullOrEmpty(exercise.GifUrl))
         {
+            //TODO: find a way to load the gif and not just the first frame
             Texture2D loadedTexture = Resources.Load<Texture2D>(exercise.GifUrl);
             if (loadedTexture != null)
             {
