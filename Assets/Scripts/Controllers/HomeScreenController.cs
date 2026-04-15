@@ -35,7 +35,6 @@ public class HomeScreenController : MonoBehaviour
         _db = FirebaseManager.Instance.Db;
         _auth = FirebaseManager.Instance.Auth;
         // preload all data we need
-        LoadUserData();
         LoadExercises();
         
         //make sure UI components are built beforehand
@@ -494,22 +493,7 @@ public class HomeScreenController : MonoBehaviour
         return inputContainer;
     }
     
-    private void LoadUserData()
-    {
-        string userId = _auth.CurrentUser.UserId;
-
-        _db.Collection("users").Document(userId).GetSnapshotAsync().ContinueWithOnMainThread(task =>
-        {
-            if (task.IsFaulted)
-            {
-                Debug.LogError("Failed to load user profile.");
-                return;
-            }
-
-            _currentUser = task.Result.ConvertTo<UserModel>();
-        
-        });
-    }
+   
 
     private void LoadExercises()
     {

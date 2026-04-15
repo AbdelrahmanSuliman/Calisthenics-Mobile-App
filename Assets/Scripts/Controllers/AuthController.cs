@@ -3,7 +3,7 @@ using Firebase.Extensions;
 using Firebase.Firestore;
 using UnityEngine;
 using UnityEngine.UIElements;
-
+using Firebase;
 public class AuthController : MonoBehaviour
 {
     private UIManager _uiManager;
@@ -79,17 +79,24 @@ public class AuthController : MonoBehaviour
         {
             if (loginTask.IsFaulted || loginTask.IsCanceled)
             {
-                errorMessage.text = "Invalid email or password";
-                Debug.LogError("Login Failed: " + loginTask.Exception);
+                var firebaseEx = loginTask.Exception?.Flatten().InnerExceptions[0] as FirebaseException;
+                if (firebaseEx != null)
+                {
+                    var errorCode = (AuthError)firebaseEx.ErrorCode;
+                    errorMessage.text = ErrorCodeMapper(errorCode);
+                    Debug.LogError($"Login Failed: {firebaseEx.Message}");
+                    return;
+                }
+                errorMessage.text = "Unknown error occured";
                 return;
             }
 
             FirebaseUser returningUser = loginTask.Result.User;
             Debug.Log("Logged in User:" + returningUser.Email);
-            _uiManager.OpenHomePage();
-            
 
             errorMessage.text = "";
+            _uiManager.OpenHomePage();
+            
         });
     }
     private void SignUp(string email, string password, string username, Label errorMessage)
@@ -123,14 +130,22 @@ public class AuthController : MonoBehaviour
         {
             if (authTask.IsFaulted || authTask.IsCanceled)
             {
-                errorMessage.text = "Auth Failed";
-                Debug.LogError("Auth Failed: " + authTask.Exception);
+                var firebaseEx = authTask.Exception?.Flatten().InnerExceptions[0] as FirebaseException;
+                if (firebaseEx != null)
+                {
+                    var errorCode = (AuthError)firebaseEx.ErrorCode;
+                    errorMessage.text = ErrorCodeMapper(errorCode);
+                    Debug.LogError($"Auth Failed: {firebaseEx.Message}");
+                    return;
+                }
+
+                errorMessage.text = "Unknown error occured";
                 return;
             }
-
-            FirebaseUser newUser = authTask.Result.User;
             
-            UserModel newUserProfile = new UserModel(username);
+            var newUser = authTask.Result.User;
+            
+            var newUserProfile = new UserModel(username);
             
             _db.Collection("users").Document(newUser.UserId).SetAsync(newUserProfile).ContinueWithOnMainThread(dbTask =>
             {
@@ -139,6 +154,8 @@ public class AuthController : MonoBehaviour
                     Debug.LogError("Database Failed: " + dbTask.Exception);
                     return;
                 }
+                
+                errorMessage.text = "";
 
                 _uiManager.OpenExerciseSelectionPage();
                 Debug.Log($"User {username} registered successfully!");
@@ -148,8 +165,29 @@ public class AuthController : MonoBehaviour
 
         });
     }
-    
 
+    private string ErrorCodeMapper(AuthError err)
+    {
+        switch (err)
+        {
+            case AuthError.EmailAlreadyInUse:
+                return "Email already in use";
+            case AuthError.InvalidEmail:
+                return "Invalid email format";
+            case AuthError.WeakPassword:
+                return "Weak Password";
+            case AuthError.UserNotFound:
+                return "No account found for this email";
+            case AuthError.WrongPassword:
+                return "Wrong password";
+            case AuthError.NetworkRequestFailed:
+                return "Network error";
+            case AuthError.TooManyRequests:
+                return "Too many failed attempts, try again later";
+            default:
+                return "Authentication failed, please try again";
+        }
+    }
  
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
