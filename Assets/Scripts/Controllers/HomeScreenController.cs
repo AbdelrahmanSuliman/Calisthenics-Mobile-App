@@ -14,7 +14,7 @@ public class HomeScreenController : MonoBehaviour
     private FirebaseAuth _auth;
     private UIManager _uiManager;
 
-    private List<SkillPathModel> _allSkillPaths = new List<SkillPathModel>();
+    private readonly List<SkillPathModel> _allSkillPaths = new List<SkillPathModel>();
     private VisualElement _activePopup;  
     private VisualElement _exerciseContainer;
     private Label _popupTitleLabel;
@@ -38,7 +38,6 @@ public class HomeScreenController : MonoBehaviour
         _uiManager = GetComponent<UIManager>();
         // preload all data we need
         LoadExercises();
-        
         
         
         //make sure UI components are built beforehand

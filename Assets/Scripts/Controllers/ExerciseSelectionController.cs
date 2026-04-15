@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 public class ExerciseSelectionController : MonoBehaviour
 {
 
-    private int exerciseCount;
+    private int _exerciseCount;
     private UIManager _uiManager;
     
     private FirebaseFirestore _db;
@@ -23,7 +23,7 @@ public class ExerciseSelectionController : MonoBehaviour
 
     private void OnEnable()
     {
-        exerciseCount = 0;
+        _exerciseCount = 0;
         _db = FirebaseManager.Instance.Db;
         _auth = FirebaseManager.Instance.Auth;
         _uiManager = GetComponent<UIManager>();
@@ -33,16 +33,13 @@ public class ExerciseSelectionController : MonoBehaviour
         _exerciseScrollView = root.Q<ScrollView>("ExerciseScrollView");
         _confirmAddBtn = root.Q<Button>("ConfirmAddButton");
 
-        if (_confirmAddBtn != null)
-        {
-            _confirmAddBtn.SetEnabled(false);
-            _confirmAddBtn.clicked += AddSelectedExerciseToProfile;
-        }
-        FetchAvailableExercises();
-   
+        if (_confirmAddBtn == null) return;
+        _confirmAddBtn.SetEnabled(false);
+        _confirmAddBtn.clicked += AddSelectedExerciseToProfile;
+
     }
 
-    private void FetchAvailableExercises()
+    public void FetchAvailableExercises()
     {
         _exerciseScrollView.Clear();
 
@@ -86,6 +83,10 @@ public class ExerciseSelectionController : MonoBehaviour
         cardBtn.style.whiteSpace = WhiteSpace.Normal;
         cardBtn.style.fontSize = 32;
         cardBtn.style.flexShrink = 0; 
+        cardBtn.style.marginTop = 60; 
+        cardBtn.style.marginRight = 32;
+        cardBtn.style.marginLeft = 32;
+        cardBtn.style.marginBottom = 32;
 
         cardBtn.clicked += () =>
         {
@@ -140,9 +141,9 @@ public class ExerciseSelectionController : MonoBehaviour
                 _confirmAddBtn.text = "Select Next Exercise";
                 _exerciseScrollView.Query<Button>().ForEach(btn => btn.style.backgroundColor = new Color(0.15f, 0.15f, 0.15f));
                 
-                exerciseCount++;
+                _exerciseCount++;
                 
-                if(exerciseCount >= 3)
+                if(_exerciseCount >= 3)
                     _uiManager.OpenHomePage();
             });
         });

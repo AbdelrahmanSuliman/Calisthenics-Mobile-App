@@ -157,7 +157,7 @@ public class AuthController : MonoBehaviour
                 
                 errorMessage.text = "";
 
-                _uiManager.OpenExerciseSelectionPage();
+                _uiManager.OpenExerciseSelectionPageAndLoadExercises();
                 Debug.Log($"User {username} registered successfully!");
                 
             });
