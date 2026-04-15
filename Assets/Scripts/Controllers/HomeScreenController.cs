@@ -91,11 +91,16 @@ public class HomeScreenController : MonoBehaviour
     _currentOpenPath = skillPath;
     _exerciseContainer.Clear();
     
-    var loadingLabel = new Label("Loading your progress...");
-    loadingLabel.style.fontSize = 45;
-    loadingLabel.style.color = Color.white;
-    loadingLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
-    loadingLabel.style.marginTop = 50;
+    var loadingLabel = new Label("Loading your progress...")
+    {
+        style =
+        {
+            fontSize = 45,
+            color = Color.white,
+            unityTextAlign = TextAnchor.MiddleCenter,
+            marginTop = 50
+        }
+    };
     _exerciseContainer.Add(loadingLabel);
 
     _activePopup.style.display = DisplayStyle.Flex;
@@ -145,57 +150,80 @@ public class HomeScreenController : MonoBehaviour
     //this runs only once and makes sure the roadmap popup is built
     private void BuildRoadMapPopup()
     {
-        _activePopup = new VisualElement();
-        _activePopup.style.position = Position.Absolute;
-        _activePopup.style.width = Length.Percent(100);
-        _activePopup.style.height = Length.Percent(100);
-        
-        _activePopup.style.backgroundColor = new Color(0, 0, 0, 0.92f);
-        
-        _activePopup.style.justifyContent = Justify.Center;
-        _activePopup.style.alignItems = Align.Center;
+        _activePopup = new VisualElement
+        {
+            style =
+            {
+                position = Position.Absolute,
+                width = Length.Percent(100),
+                height = Length.Percent(100),
+                backgroundColor = new Color(0, 0, 0, 0.92f),
+                justifyContent = Justify.Center,
+                alignItems = Align.Center
+            }
+        };
 
-        var window = new VisualElement();
-        window.style.width = Length.Percent(95);
-        window.style.height = Length.Percent(90);
-        window.style.backgroundColor = new Color(0.12f, 0.12f, 0.12f);
-        window.style.borderTopLeftRadius = 40;
-        window.style.borderTopRightRadius = 40;
-        
-        window.style.paddingTop = 60; 
-        window.style.paddingBottom = 40;
-        window.style.paddingLeft = 40;
-        window.style.paddingRight = 40;
+        var window = new VisualElement
+        {
+            style =
+            {
+                width = Length.Percent(95),
+                height = Length.Percent(90),
+                backgroundColor = new Color(0.12f, 0.12f, 0.12f),
+                borderTopLeftRadius = 40,
+                borderTopRightRadius = 40,
+                paddingTop = 60,
+                paddingBottom = 40,
+                paddingLeft = 40,
+                paddingRight = 40
+            }
+        };
+
         _activePopup.Add(window);
 
-        var header = new VisualElement();
-        header.style.flexDirection = FlexDirection.Row;
-        header.style.justifyContent = Justify.SpaceBetween;
-        header.style.alignItems = Align.Center;
-        header.style.marginBottom = 40;
+        var header = new VisualElement
+        {
+            style =
+            {
+                flexDirection = FlexDirection.Row,
+                justifyContent = Justify.SpaceBetween,
+                alignItems = Align.Center,
+                marginBottom = 40
+            }
+        };
         window.Add(header);
 
-        _popupTitleLabel = new Label($"Skill Path"); 
-        _popupTitleLabel.style.fontSize = 80;
-        _popupTitleLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
-        _popupTitleLabel.style.color = Color.white;
+        _popupTitleLabel = new Label($"Skill Path")
+        {
+            style =
+            {
+                fontSize = 80,
+                unityFontStyleAndWeight = FontStyle.Bold,
+                color = Color.white
+            }
+        };
         header.Add(_popupTitleLabel);
 
         var closeButton = new Button(() =>
         {
             _activePopup.style.display = DisplayStyle.None;
-        });
-        
-        closeButton.text = "X";
-        closeButton.style.width = 120; 
-        closeButton.style.height = 120;
-        closeButton.style.fontSize = 50;
-        closeButton.style.backgroundColor = new Color(0.9f, 0.2f, 0.2f);
-        closeButton.style.color = Color.white;
-        closeButton.style.borderTopLeftRadius = 60; 
-        closeButton.style.borderTopRightRadius = 60;
-        closeButton.style.borderBottomLeftRadius = 60;
-        closeButton.style.borderBottomRightRadius = 60;
+        })
+        {
+            text = "X",
+            style =
+            {
+                width = 120,
+                height = 120,
+                fontSize = 50,
+                backgroundColor = new Color(0.9f, 0.2f, 0.2f),
+                color = Color.white,
+                borderTopLeftRadius = 60,
+                borderTopRightRadius = 60,
+                borderBottomLeftRadius = 60,
+                borderBottomRightRadius = 60
+            }
+        };
+
         header.Add(closeButton);
 
         _exerciseContainer = new ScrollView();
@@ -208,60 +236,89 @@ public class HomeScreenController : MonoBehaviour
 
     private void BuildLogsPopup()
     {
-        _logsPopup = new VisualElement();
-        _logsPopup.style.position = Position.Absolute;
-        _logsPopup.style.width = Length.Percent(100);
-        _logsPopup.style.height = Length.Percent(100);
-        
-        _logsPopup.style.backgroundColor = new Color(0, 0, 0, 0.92f);
-        _logsPopup.style.justifyContent = Justify.Center;
-        _logsPopup.style.alignItems = Align.Center;
+        _logsPopup = new VisualElement
+        {
+            style =
+            {
+                position = Position.Absolute,
+                width = Length.Percent(100),
+                height = Length.Percent(100),
+                backgroundColor = new Color(0, 0, 0, 0.92f),
+                justifyContent = Justify.Center,
+                alignItems = Align.Center
+            }
+        };
 
 
-        var window = new VisualElement();
-        window.style.width = Length.Percent(95);
-        window.style.height = Length.Percent(90);
-        window.style.backgroundColor = new Color(0.12f, 0.12f, 0.12f);
-        window.style.borderTopLeftRadius = 40;
-        window.style.borderTopRightRadius = 40;
-        
-        window.style.paddingTop = 60; 
-        window.style.paddingBottom = 40;
-        window.style.paddingLeft = 40;
-        window.style.paddingRight = 40;
+        var window = new VisualElement
+        {
+            style =
+            {
+                width = Length.Percent(95),
+                height = Length.Percent(90),
+                backgroundColor = new Color(0.12f, 0.12f, 0.12f),
+                borderTopLeftRadius = 40,
+                borderTopRightRadius = 40,
+                paddingTop = 60,
+                paddingBottom = 40,
+                paddingLeft = 40,
+                paddingRight = 40
+            }
+        };
+
         _logsPopup.Add(window);
         
-        var header = new VisualElement();
-        header.style.flexDirection = FlexDirection.Row;
-        header.style.justifyContent = Justify.SpaceBetween;
-        header.style.alignItems = Align.Center;
-        header.style.marginBottom = 40;
+        var header = new VisualElement
+        {
+            style =
+            {
+                flexDirection = FlexDirection.Row,
+                justifyContent = Justify.SpaceBetween,
+                alignItems = Align.Center,
+                marginBottom = 40
+            }
+        };
         window.Add(header);
         
-        _logsTitleLabel = new Label($"Skill Path"); 
-        _logsTitleLabel.style.fontSize = 80;
-        _logsTitleLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
-        _logsTitleLabel.style.color = Color.white;
+        _logsTitleLabel = new Label($"Skill Path")
+        {
+            style =
+            {
+                fontSize = 80,
+                unityFontStyleAndWeight = FontStyle.Bold,
+                color = Color.white
+            }
+        };
         header.Add(_logsTitleLabel);
         
         var closeButton = new Button(() => {
             _logsPopup.style.display = DisplayStyle.None;
-        });
-        
-        closeButton.text = "X";
-        closeButton.style.width = 120; 
-        closeButton.style.height = 120;
-        closeButton.style.fontSize = 50;
-        closeButton.style.backgroundColor = new Color(0.9f, 0.2f, 0.2f);
-        closeButton.style.color = Color.white;
-        closeButton.style.borderTopLeftRadius = 60; 
-        closeButton.style.borderTopRightRadius = 60;
-        closeButton.style.borderBottomLeftRadius = 60;
-        closeButton.style.borderBottomRightRadius = 60;
+        })
+        {
+            text = "X",
+            style =
+            {
+                width = 120,
+                height = 120,
+                fontSize = 50,
+                backgroundColor = new Color(0.9f, 0.2f, 0.2f),
+                color = Color.white,
+                borderTopLeftRadius = 60,
+                borderTopRightRadius = 60,
+                borderBottomLeftRadius = 60,
+                borderBottomRightRadius = 60
+            }
+        };
+
         header.Add(closeButton);
         
-        _logsContainer = new ScrollView();
-        _logsContainer.style.flexGrow = 1;
+        _logsContainer = new ScrollView
+        {
+            style =
+            {
+                flexGrow = 1
+            }
+        };
         window.Add(_logsContainer);
         
         _logsPopup.style.display = DisplayStyle.None;
@@ -271,16 +328,21 @@ public class HomeScreenController : MonoBehaviour
 
     private VisualElement BuildExerciseCard(ExerciseModel exercise, bool isInProgress, bool isCompleted, int bestReps)
     {
-        var card = new VisualElement();
-        card.style.height = StyleKeyword.Auto; 
-        card.style.width = Length.Percent(100);
-        card.style.flexDirection = FlexDirection.Row;
-        card.style.paddingTop = 40;
-        card.style.paddingBottom = 40;
-        card.style.paddingLeft = 30;
-        card.style.paddingRight = 30;
-        card.style.marginBottom = 30;
-        
+        var card = new VisualElement
+        {
+            style =
+            {
+                height = StyleKeyword.Auto,
+                width = Length.Percent(100),
+                flexDirection = FlexDirection.Row,
+                paddingTop = 40,
+                paddingBottom = 40,
+                paddingLeft = 30,
+                paddingRight = 30,
+                marginBottom = 30
+            }
+        };
+
         //logic to dynamically change the background of the exercise card depending on its status
         if (isCompleted) 
             card.style.backgroundColor = new Color(0.15f, 0.45f, 0.2f); // Green
@@ -295,31 +357,51 @@ public class HomeScreenController : MonoBehaviour
         card.style.borderBottomLeftRadius = 25;
         card.style.borderBottomRightRadius = 25;
         
-        var textColumn = new VisualElement();
-        textColumn.style.flexGrow = 1;
-        textColumn.style.marginRight = 20;
-        
-        var nameLabel = new Label(exercise.Name);
-        nameLabel.style.fontSize = 55;
-        nameLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
-        nameLabel.style.color = Color.white;
-        nameLabel.style.marginBottom = 10;
+        var textColumn = new VisualElement
+        {
+            style =
+            {
+                flexGrow = 1,
+                marginRight = 20
+            }
+        };
+
+        var nameLabel = new Label(exercise.Name)
+        {
+            style =
+            {
+                fontSize = 55,
+                unityFontStyleAndWeight = FontStyle.Bold,
+                color = Color.white,
+                marginBottom = 10
+            }
+        };
         textColumn.Add(nameLabel);
 
-        var descLabel = new Label(exercise.Description);
-        descLabel.style.whiteSpace = WhiteSpace.Normal;
-        descLabel.style.fontSize = 35;  
-        descLabel.style.color = new Color(0.85f, 0.85f, 0.85f);
+        var descLabel = new Label(exercise.Description)
+        {
+            style =
+            {
+                whiteSpace = WhiteSpace.Normal,
+                fontSize = 35,
+                color = new Color(0.85f, 0.85f, 0.85f)
+            }
+        };
         textColumn.Add(descLabel);
         
         card.Add(textColumn);
         
         if (isCompleted || isInProgress)
         {
-            var bestRepsLabel = new Label($"Best: {bestReps} Reps");
-            bestRepsLabel.style.fontSize = 35;
-            bestRepsLabel.style.color = new Color(0.9f, 0.9f, 0.3f); 
-            bestRepsLabel.style.marginTop = 15;
+            var bestRepsLabel = new Label($"Best: {bestReps} Reps")
+            {
+                style =
+                {
+                    fontSize = 35,
+                    color = new Color(0.9f, 0.9f, 0.3f),
+                    marginTop = 15
+                }
+            };
             textColumn.Add(bestRepsLabel);
             
             
@@ -328,25 +410,35 @@ public class HomeScreenController : MonoBehaviour
         }
         else
         {
-            var lockedLabel = new Label($"Complete previous exercises to unlock");
-            lockedLabel.style.fontSize = 35;
-            lockedLabel.style.color = Color.gray; 
-            lockedLabel.style.marginTop = 15;
+            var lockedLabel = new Label($"Complete previous exercises to unlock")
+            {
+                style =
+                {
+                    fontSize = 35,
+                    color = Color.gray,
+                    marginTop = 15
+                }
+            };
             textColumn.Add(lockedLabel);
         }
 
-        var gifBox = new VisualElement();
-        gifBox.style.width = 200;
-        gifBox.style.height = 200;
-        gifBox.style.backgroundColor = new Color(0.1f, 0.1f, 0.1f);
-        gifBox.style.justifyContent = Justify.Center;
-        gifBox.style.alignItems = Align.Center;
-        gifBox.style.borderTopLeftRadius = 20;
-        gifBox.style.borderTopRightRadius = 20;
-        gifBox.style.borderBottomLeftRadius = 20;
-        gifBox.style.borderBottomRightRadius = 20;
+        var gifBox = new VisualElement
+        {
+            style =
+            {
+                width = 200,
+                height = 200,
+                backgroundColor = new Color(0.1f, 0.1f, 0.1f),
+                justifyContent = Justify.Center,
+                alignItems = Align.Center,
+                borderTopLeftRadius = 20,
+                borderTopRightRadius = 20,
+                borderBottomLeftRadius = 20,
+                borderBottomRightRadius = 20
+            }
+        };
 
-        
+
         //this makes sure that the image fills the background entirely as well as making sure the image is centered
         if (!string.IsNullOrEmpty(exercise.GifUrl))
         {
@@ -369,9 +461,14 @@ public class HomeScreenController : MonoBehaviour
     {
         _logsContainer.Clear();
 
-        var loadingLabel = new Label("Fetching logs...");
-        loadingLabel.style.fontSize = 40;
-        loadingLabel.style.color = Color.gray;
+        var loadingLabel = new Label("Fetching logs...")
+        {
+            style =
+            {
+                fontSize = 40,
+                color = Color.gray
+            }
+        };
         _logsContainer.Add(loadingLabel);
 
         _logsPopup.style.display = DisplayStyle.Flex;
@@ -413,31 +510,46 @@ public class HomeScreenController : MonoBehaviour
     }
     private VisualElement BuildLogEntry(WorkoutLogModel log)
     {
-        var row = new VisualElement();
-        row.style.flexDirection = FlexDirection.Row;
-        row.style.justifyContent = Justify.SpaceBetween;
-        row.style.backgroundColor = new Color(0.2f, 0.2f, 0.2f);
-        row.style.paddingBottom = 20;
-        row.style.paddingLeft = 20;
-        row.style.paddingRight = 20;
-        row.style.paddingTop = 20;
-        row.style.marginBottom = 15;
-        row.style.borderTopLeftRadius = 15;
-        row.style.borderTopRightRadius = 15;
-        row.style.borderBottomLeftRadius = 15;
-        row.style.borderBottomRightRadius = 15;
+        var row = new VisualElement
+        {
+            style =
+            {
+                flexDirection = FlexDirection.Row,
+                justifyContent = Justify.SpaceBetween,
+                backgroundColor = new Color(0.2f, 0.2f, 0.2f),
+                paddingBottom = 20,
+                paddingLeft = 20,
+                paddingRight = 20,
+                paddingTop = 20,
+                marginBottom = 15,
+                borderTopLeftRadius = 15,
+                borderTopRightRadius = 15,
+                borderBottomLeftRadius = 15,
+                borderBottomRightRadius = 15
+            }
+        };
 
         DateTime date = log.Date.ToDateTime();
         
-        var dateLabel = new Label(date.ToString("MMM dd, yyyy - HH:mm"));
-        dateLabel.style.fontSize = 35;
-        dateLabel.style.color = Color.white;
+        var dateLabel = new Label(date.ToString("MMM dd, yyyy - HH:mm"))
+        {
+            style =
+            {
+                fontSize = 35,
+                color = Color.white
+            }
+        };
         row.Add(dateLabel);
 
-        var repsLabel = new Label($"{log.Reps} Reps");
-        repsLabel.style.fontSize = 40;
-        repsLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
-        repsLabel.style.color = log.Reps >= 8 ? new Color(0.3f, 0.8f, 0.3f) : Color.white;
+        var repsLabel = new Label($"{log.Reps} Reps")
+        {
+            style =
+            {
+                fontSize = 40,
+                unityFontStyleAndWeight = FontStyle.Bold,
+                color = log.Reps >= 8 ? new Color(0.3f, 0.8f, 0.3f) : Color.white
+            }
+        };
         row.Add(repsLabel);
 
         return row;
@@ -445,35 +557,50 @@ public class HomeScreenController : MonoBehaviour
     
     private VisualElement BuildNewLogInputArea(ExerciseModel exercise)
     {
-        var inputContainer = new VisualElement();
-        inputContainer.style.flexDirection = FlexDirection.Row;
-        inputContainer.style.justifyContent = Justify.Center;
-        inputContainer.style.marginTop = 40;
-        inputContainer.style.paddingBottom = 20;
-        inputContainer.style.paddingLeft = 20;
-        inputContainer.style.paddingRight = 20;
-        inputContainer.style.paddingTop = 20;
-        inputContainer.style.backgroundColor = new Color(0.15f, 0.15f, 0.15f);
-        inputContainer.style.borderTopLeftRadius = 20;
-        inputContainer.style.borderTopRightRadius = 20;
-        inputContainer.style.borderBottomLeftRadius = 20;
-        inputContainer.style.borderBottomRightRadius = 20;
+        var inputContainer = new VisualElement
+        {
+            style =
+            {
+                flexDirection = FlexDirection.Row,
+                justifyContent = Justify.Center,
+                marginTop = 40,
+                paddingBottom = 20,
+                paddingLeft = 20,
+                paddingRight = 20,
+                paddingTop = 20,
+                backgroundColor = new Color(0.15f, 0.15f, 0.15f),
+                borderTopLeftRadius = 20,
+                borderTopRightRadius = 20,
+                borderBottomLeftRadius = 20,
+                borderBottomRightRadius = 20
+            }
+        };
 
-        var repsInput = new TextField();
-        repsInput.style.width = 200;
-        repsInput.style.fontSize = 50;
-        repsInput.style.backgroundColor = Color.white;
-        repsInput.style.color = Color.black;
+        var repsInput = new TextField
+        {
+            style =
+            {
+                width = 200,
+                fontSize = 50,
+                backgroundColor = Color.white,
+                color = Color.black
+            }
+        };
         inputContainer.Add(repsInput);
 
-        var logBtn = new Button();
-        logBtn.text = "Save Logs";
-        logBtn.style.fontSize = 40;
-        logBtn.style.marginLeft = 20;
-        logBtn.style.paddingLeft = 20;
-        logBtn.style.paddingRight = 20;
-        logBtn.style.backgroundColor = new Color(0.2f, 0.6f, 0.2f);
-        
+        var logBtn = new Button
+        {
+            text = "Save Logs",
+            style =
+            {
+                fontSize = 40,
+                marginLeft = 20,
+                paddingLeft = 20,
+                paddingRight = 20,
+                backgroundColor = new Color(0.2f, 0.6f, 0.2f)
+            }
+        };
+
         logBtn.clicked += () => 
         {
             if (int.TryParse(repsInput.value, out int repsLogged))

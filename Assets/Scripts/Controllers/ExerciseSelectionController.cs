@@ -71,18 +71,23 @@ public class ExerciseSelectionController : MonoBehaviour
     
     private VisualElement CreateExerciseCard(SkillPathModel path, ExerciseModel exercise)
     {
-        Button cardBtn = new Button();
-        cardBtn.text = $"[{path.PathType}]\n{exercise.Name}\n\n{exercise.Description}";
-    
-        cardBtn.style.backgroundColor = new StyleColor(new Color(0.89f, 0.3f, 0.4f)); 
-        cardBtn.style.width = 480; 
-        cardBtn.style.height = 700; 
-        cardBtn.style.marginRight = 32;
-        cardBtn.style.marginLeft = 32;
-        cardBtn.style.marginTop = 32;
-        cardBtn.style.whiteSpace = WhiteSpace.Normal;
-        cardBtn.style.fontSize = 32;
-        cardBtn.style.flexShrink = 0; 
+        Button cardBtn = new Button
+        {
+            text = $"[{path.PathType}]\n{exercise.Name}\n\n{exercise.Description}",
+            style =
+            {
+                backgroundColor = new StyleColor(new Color(0.89f, 0.3f, 0.4f)),
+                width = 480,
+                height = 700,
+                marginRight = 32,
+                marginLeft = 32,
+                marginTop = 32,
+                whiteSpace = WhiteSpace.Normal,
+                fontSize = 32,
+                flexShrink = 0
+            }
+        };
+
         cardBtn.style.marginTop = 60; 
         cardBtn.style.marginRight = 32;
         cardBtn.style.marginLeft = 32;
