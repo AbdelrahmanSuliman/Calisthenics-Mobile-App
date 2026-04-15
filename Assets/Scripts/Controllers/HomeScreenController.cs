@@ -34,8 +34,12 @@ public class HomeScreenController : MonoBehaviour
     {
         _db = FirebaseManager.Instance.Db;
         _auth = FirebaseManager.Instance.Auth;
+
+        _uiManager = GetComponent<UIManager>();
         // preload all data we need
         LoadExercises();
+        
+        
         
         //make sure UI components are built beforehand
         BuildRoadMapPopup();
