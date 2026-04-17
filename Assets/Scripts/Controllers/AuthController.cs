@@ -9,7 +9,8 @@ public class AuthController : MonoBehaviour
     private UIManager _uiManager;
     private FirebaseAuth _auth;
     private FirebaseFirestore _db;
-        
+
+    private UIDocument _uiDoc;
     private void OnEnable()
     {
         
@@ -19,9 +20,9 @@ public class AuthController : MonoBehaviour
 
         //grab the UI manager component
         _uiManager = GetComponent<UIManager>();
-        var uiDoc = GetComponent<UIDocument>();
+        _uiDoc = GetComponent<UIDocument>();
 
-        var root = uiDoc.rootVisualElement;
+        var root = _uiDoc.rootVisualElement;
         
         //grab our credentials
         var signupUsernameInput = root.Q<TextField>("SignupUsernameInput");
@@ -59,11 +60,13 @@ public class AuthController : MonoBehaviour
 
         redirectBtnSignup.clicked += () =>
         {
+            ClearTextFields();
             _uiManager.OpenLoginPage();
         };
         
         if (redirectBtnLogin != null)
         {
+            ClearTextFields();
             redirectBtnLogin.clicked += () => _uiManager.OpenSignupPage(); 
         }
 
@@ -191,7 +194,16 @@ public class AuthController : MonoBehaviour
                 return "Authentication failed, please try again";
         }
     }
- 
+
+    private void ClearTextFields()
+    {
+        var root = _uiDoc.rootVisualElement;
+
+        root.Query<TextField>().ForEach(field => field.value = "");
+        root.Q<Label>("SignupErrorMessage").text = "";
+        root.Q<Label>("LoginErrorMessage").text = "";
+    }
+        
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
