@@ -1,12 +1,12 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI%20Toolkit/Project%20Menu%20Style.uss?fileID=7433441132597879392&amp;guid=506c78db3053df04f85b94a7770ee0d4&amp;type=3#Project Menu Style"/>
     <ui:VisualElement name="SignupMenu" class="screenContainer screen-container" style="flex-grow: 1; display: none; width: 100%; height: 100%; align-items: stretch;">
-        <ui:Label text="Sign Up Menu" name="Header" class="header" style="-unity-font-style: bold;"/>
-        <ui:VisualElement name="InputFields" class="inputContainer input-container" style="flex-grow: 1; justify-content: flex-start; align-items: center; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; align-self: center; align-content: flex-start; flex-direction: column; width: 100%; height: 100%; -unity-text-align: middle-left;">
+        <ui:Label text="Sign Up" name="Header" class="header" style="-unity-font-style: bold;"/>
+        <ui:VisualElement name="InputFields" class="inputContainer input-container" style="flex-grow: 1; justify-content: flex-start; align-items: center; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; align-self: flex-end; align-content: flex-start; flex-direction: column; width: 100%; height: 100%; -unity-text-align: middle-left;">
             <ui:TextField label="Email" placeholder-text="filler text" name="SignupEmailInput" class="inputField input-field"/>
             <ui:TextField label="Username&#10;" placeholder-text="filler text" name="SignupUsernameInput" class="inputField input-field"/>
-            <ui:TextField label="Password" placeholder-text="filler text" name="SignupPasswordInput" class="inputField input-field"/>
-            <ui:Label text="" name="SignupErrorMessage"/>
+            <ui:TextField label="Password" placeholder-text="filler text" name="SignupPasswordInput" password="true" class="inputField input-field"/>
+            <ui:Label text="" name="SignupErrorMessage" class="error-message" style="font-size: 30px;"/>
             <ui:Button text="Already have an account?" name="RedirectButton" class="button"/>
             <ui:Button text="Submit&#10;" name="SignUpConfirm" class="button"/>
         </ui:VisualElement>
@@ -15,8 +15,9 @@
         <ui:Label text="Log In " name="Header" class="header" style="align-self: center;"/>
         <ui:VisualElement name="InputFields" class="inputContainer input-container" style="flex-grow: 1; justify-content: flex-start; align-items: center; padding-top: 24px; padding-right: 24px; padding-bottom: 24px; padding-left: 24px; align-self: center; align-content: flex-start; flex-direction: column;">
             <ui:TextField label="Email" placeholder-text="filler text" name="LoginEmailInput" class="inputField input-field"/>
-            <ui:TextField label="Password" placeholder-text="filler text" name="LoginPasswordInput" class="inputField input-field"/>
-            <ui:Label text="" name="LoginErrorMessage"/>
+            <ui:TextField label="Password" placeholder-text="filler text" name="LoginPasswordInput" password="true" class="inputField input-field"/>
+            <ui:Label text="" name="LoginErrorMessage" class="error-message"/>
+            <ui:Button text="Don&apos;t have an account?" name="RedirectButtonLogin" class="button"/>
             <ui:Button text="Submit&#10;" name="LoginConfirm" class="button"/>
         </ui:VisualElement>
     </ui:VisualElement>
@@ -24,7 +25,23 @@
         <ui:ScrollView name="ExerciseScrollView" mode="Horizontal" style="display: flex; width: 100%; height: 100%;"/>
         <ui:Button text="Add" name="ConfirmAddButton" class="button"/>
     </ui:VisualElement>
-    <ui:VisualElement name="HomeScreen" style="flex-grow: 1; display: flex; justify-content: center; align-items: center;">
-        <ui:Button text="Start" name="StartingNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>
+    <ui:VisualElement name="HomeScreen" class="screen-container" style="flex-grow: 1; display: flex; justify-content: center; align-items: center; align-self: center;">
+        <ui:Button text="Sign Out" name="SignOutButton" class="button" style="align-items: flex-end; align-self: flex-end;"/>
+        <ui:VisualElement name="TreeContainer" style="flex-grow: 1; background-size: 100% 34%; height: auto; align-content: flex-start; align-self: center; justify-content: space-evenly; flex-direction: row; align-items: center; flex-shrink: 1; width: 1085px;">
+            <ui:VisualElement name="PullNodeContainer" class="NodeContainer" style="flex-grow: 1;">
+                <ui:Button text="Pull" name="PullNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="PushNodeContainer" class="NodeContainer" style="flex-grow: 1; flex-direction: column-reverse; justify-content: space-around; align-items: center; align-self: center; height: 848px;">
+                <ui:Button text="Start" name="StartingNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;">
+                    <ui:VisualElement name="LegsLine" style="flex-grow: 1; width: 299px; height: 6px; background-color: rgb(234, 234, 234); position: absolute; top: 20px; left: 111px; background-position-y: center; rotate: 1 0 -1 45deg; flex-direction: column-reverse; scale: 1 1;"/>
+                    <ui:VisualElement name="PushLine" class="lines" style="flex-grow: 1; top: -120px; left: -98px; width: 436px; rotate: 90deg;"/>
+                    <ui:VisualElement name="PullLine" style="flex-grow: 1; width: 299px; height: 6px; background-color: rgb(234, 234, 234); position: absolute; top: -11px; left: -230px; background-position-y: center; rotate: 1 0 -1 -45deg; flex-direction: column-reverse; scale: 1 1;"/>
+                </ui:Button>
+                <ui:Button text="Push" name="PushNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px; margin-bottom: 0;"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="LegsNodeContainer" class="NodeContainer" style="flex-grow: 1;">
+                <ui:Button text="Legs" name="LegsNode" tooltip="" class="tree-node" style="border-top-left-radius: 188px; border-top-right-radius: 188px; border-bottom-right-radius: 188px; border-bottom-left-radius: 188px; height: 240px; width: 240px;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

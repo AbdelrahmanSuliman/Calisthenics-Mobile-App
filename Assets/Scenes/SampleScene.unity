@@ -355,6 +355,7 @@ GameObject:
   - component: {fileID: 1257899349}
   - component: {fileID: 1257899350}
   - component: {fileID: 1257899351}
+  - component: {fileID: 1257899352}
   m_Layer: 5
   m_Name: PageViewer
   m_TagString: Untagged
@@ -460,6 +461,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b4b2bfbc3de5c48aceb6c9115f6707, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HomeScreenController
+--- !u!114 &1257899352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1257899344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd3b38dbd6a0381448d6dd97ffbe054c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirebaseManager
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -3,25 +3,26 @@ using Firebase.Extensions;
 using Firebase.Firestore;
 using UnityEngine;
 using UnityEngine.UIElements;
-
+using Firebase;
 public class AuthController : MonoBehaviour
 {
     private UIManager _uiManager;
     private FirebaseAuth _auth;
     private FirebaseFirestore _db;
-        
+
+    private UIDocument _uiDoc;
     private void OnEnable()
     {
         
         //initialize firebase
-        _auth = FirebaseAuth.DefaultInstance;
-        _db = FirebaseFirestore.DefaultInstance;
+        _auth = FirebaseManager.Instance.Auth;
+        _db = FirebaseManager.Instance.Db;
 
         //grab the UI manager component
         _uiManager = GetComponent<UIManager>();
-        var uiDoc = GetComponent<UIDocument>();
+        _uiDoc = GetComponent<UIDocument>();
 
-        var root = uiDoc.rootVisualElement;
+        var root = _uiDoc.rootVisualElement;
         
         //grab our credentials
         var signupUsernameInput = root.Q<TextField>("SignupUsernameInput");
@@ -33,14 +34,18 @@ public class AuthController : MonoBehaviour
         
         //access buttons
         var signupBtn = root.Q<Button>("SignUpConfirm");
-        var redirectBtn = root.Q<Button>("RedirectButton");
+        var redirectBtnSignup = root.Q<Button>("RedirectButton");
         var loginBtn = root.Q<Button>("LoginConfirm");
+        var redirectBtnLogin = root.Q<Button>("RedirectButtonLogin");
         
         
         //access error messages
         var signupErrorMessage = root.Q<Label>("SignupErrorMessage");
         var loginErrorMessage = root.Q<Label>("LoginErrorMessage");
         
+        
+        if (signupErrorMessage != null) signupErrorMessage.pickingMode = PickingMode.Ignore;
+        if (loginErrorMessage != null) loginErrorMessage.pickingMode = PickingMode.Ignore;
 
         //Add logic to buttons
         signupBtn.clicked += () =>
@@ -53,10 +58,17 @@ public class AuthController : MonoBehaviour
             LogIn(loginEmailInput.value, loginPasswordInput.value, loginErrorMessage);
         };
 
-        redirectBtn.clicked += () =>
+        redirectBtnSignup.clicked += () =>
         {
+            ClearTextFields();
             _uiManager.OpenLoginPage();
         };
+        
+        if (redirectBtnLogin != null)
+        {
+            ClearTextFields();
+            redirectBtnLogin.clicked += () => _uiManager.OpenSignupPage(); 
+        }
 
     }
 
@@ -73,17 +85,23 @@ public class AuthController : MonoBehaviour
         {
             if (loginTask.IsFaulted || loginTask.IsCanceled)
             {
-                errorMessage.text = "Invalid email or password";
-                Debug.LogError("Login Failed: " + loginTask.Exception);
+                if (loginTask.Exception?.Flatten().GetBaseException() is FirebaseException firebaseEx)
+                {
+                    var errorCode = (AuthError)firebaseEx.ErrorCode;
+                    errorMessage.text = ErrorCodeMapper(errorCode);
+                    Debug.LogError($"Login Failed: {firebaseEx.Message}");
+                    return;
+                }
+                errorMessage.text = "Unknown error occured";
                 return;
             }
 
             FirebaseUser returningUser = loginTask.Result.User;
             Debug.Log("Logged in User:" + returningUser.Email);
-            _uiManager.OpenHomePage();
-            
 
             errorMessage.text = "";
+            _uiManager.OpenHomePage();
+            
         });
     }
     private void SignUp(string email, string password, string username, Label errorMessage)
@@ -117,14 +135,21 @@ public class AuthController : MonoBehaviour
         {
             if (authTask.IsFaulted || authTask.IsCanceled)
             {
-                errorMessage.text = "Auth Failed";
-                Debug.LogError("Auth Failed: " + authTask.Exception);
+                if (authTask.Exception?.Flatten().GetBaseException() is FirebaseException firebaseEx)
+                {
+                    var errorCode = (AuthError)firebaseEx.ErrorCode;
+                    errorMessage.text = ErrorCodeMapper(errorCode);
+                    Debug.LogError($"Auth Failed: {firebaseEx.Message}");
+                    return;
+                }
+
+                errorMessage.text = "Unknown error occured";
                 return;
             }
-
-            FirebaseUser newUser = authTask.Result.User;
             
-            UserModel newUserProfile = new UserModel(username);
+            var newUser = authTask.Result.User;
+            
+            var newUserProfile = new UserModel(username);
             
             _db.Collection("users").Document(newUser.UserId).SetAsync(newUserProfile).ContinueWithOnMainThread(dbTask =>
             {
@@ -133,8 +158,10 @@ public class AuthController : MonoBehaviour
                     Debug.LogError("Database Failed: " + dbTask.Exception);
                     return;
                 }
+                
+                errorMessage.text = "";
 
-                _uiManager.OpenExerciseSelectionPage();
+                _uiManager.OpenExerciseSelectionPageAndLoadExercises();
                 Debug.Log($"User {username} registered successfully!");
                 
             });
@@ -143,7 +170,40 @@ public class AuthController : MonoBehaviour
         });
     }
 
- 
+    private string ErrorCodeMapper(AuthError err)
+    {
+        switch (err)
+        {
+            case AuthError.EmailAlreadyInUse:
+                return "Email already in use";
+            case AuthError.InvalidEmail:
+                return "Invalid email format";
+            case AuthError.WeakPassword:
+                return "Weak Password";
+            case AuthError.UserNotFound:
+                return "No account found for this email";
+            case AuthError.WrongPassword:
+                return "Wrong password";
+            case AuthError.InvalidCredential:
+                return "Invalid email or password";
+            case AuthError.NetworkRequestFailed:
+                return "Network error";
+            case AuthError.TooManyRequests:
+                return "Too many failed attempts, try again later";
+            default:
+                return "Authentication failed, please try again";
+        }
+    }
+
+    private void ClearTextFields()
+    {
+        var root = _uiDoc.rootVisualElement;
+
+        root.Query<TextField>().ForEach(field => field.value = "");
+        root.Q<Label>("SignupErrorMessage").text = "";
+        root.Q<Label>("LoginErrorMessage").text = "";
+    }
+        
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
