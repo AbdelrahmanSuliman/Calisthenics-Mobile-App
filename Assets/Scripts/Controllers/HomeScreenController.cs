@@ -76,7 +76,7 @@ public class HomeScreenController : MonoBehaviour
     
     //this populates the popup with values so the user does not create a new popup everytime the button is clicked :>
     private void PopulateRoadMapPopup(string skillPath)
-{
+    {
     
     // Ignore case sensitivity ("PUSH" == "Push")
     var selectedPath = _allSkillPaths.FirstOrDefault(p => 
@@ -117,7 +117,7 @@ public class HomeScreenController : MonoBehaviour
                 return;
             }
 
-            Dictionary<string, int> highestRepsMap = new Dictionary<string, int>();
+            var highestRepsMap = new Dictionary<string, int>();
 
             foreach (var doc in task.Result.Documents)
             {
@@ -129,7 +129,7 @@ public class HomeScreenController : MonoBehaviour
             }
             
             var sortedExercises = selectedPath.Exercises.OrderBy(e => e.Order).ToList();
-            bool previousCompleted = true;
+            var previousCompleted = true;
             
             foreach (var exercise in sortedExercises)
             {
@@ -141,6 +141,7 @@ public class HomeScreenController : MonoBehaviour
                 VisualElement card = BuildExerciseCard(exercise, isInProgress, isCompleted, bestReps);
                 _exerciseContainer.Add(card);
 
+                //make sure we update the previous completed if current exercise completed (for the next exercise)
                 previousCompleted = isCompleted;
             }
         });

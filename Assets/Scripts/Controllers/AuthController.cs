@@ -42,6 +42,9 @@ public class AuthController : MonoBehaviour
         var signupErrorMessage = root.Q<Label>("SignupErrorMessage");
         var loginErrorMessage = root.Q<Label>("LoginErrorMessage");
         
+        
+        if (signupErrorMessage != null) signupErrorMessage.pickingMode = PickingMode.Ignore;
+        if (loginErrorMessage != null) loginErrorMessage.pickingMode = PickingMode.Ignore;
 
         //Add logic to buttons
         signupBtn.clicked += () =>
@@ -79,8 +82,7 @@ public class AuthController : MonoBehaviour
         {
             if (loginTask.IsFaulted || loginTask.IsCanceled)
             {
-                var firebaseEx = loginTask.Exception?.Flatten().InnerExceptions[0] as FirebaseException;
-                if (firebaseEx != null)
+                if (loginTask.Exception?.Flatten().GetBaseException() is FirebaseException firebaseEx)
                 {
                     var errorCode = (AuthError)firebaseEx.ErrorCode;
                     errorMessage.text = ErrorCodeMapper(errorCode);
@@ -130,8 +132,7 @@ public class AuthController : MonoBehaviour
         {
             if (authTask.IsFaulted || authTask.IsCanceled)
             {
-                var firebaseEx = authTask.Exception?.Flatten().InnerExceptions[0] as FirebaseException;
-                if (firebaseEx != null)
+                if (authTask.Exception?.Flatten().GetBaseException() is FirebaseException firebaseEx)
                 {
                     var errorCode = (AuthError)firebaseEx.ErrorCode;
                     errorMessage.text = ErrorCodeMapper(errorCode);
@@ -180,6 +181,8 @@ public class AuthController : MonoBehaviour
                 return "No account found for this email";
             case AuthError.WrongPassword:
                 return "Wrong password";
+            case AuthError.InvalidCredential:
+                return "Invalid email or password";
             case AuthError.NetworkRequestFailed:
                 return "Network error";
             case AuthError.TooManyRequests:
