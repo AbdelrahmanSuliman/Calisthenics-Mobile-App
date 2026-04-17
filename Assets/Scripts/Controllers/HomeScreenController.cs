@@ -443,14 +443,21 @@ public class HomeScreenController : MonoBehaviour
         //this makes sure that the image fills the background entirely as well as making sure the image is centered
         if (!string.IsNullOrEmpty(exercise.GifUrl))
         {
-            //TODO: find a way to load the gif and not just the first frame
-            Texture2D loadedTexture = Resources.Load<Texture2D>(exercise.GifUrl);
-            if (loadedTexture != null)
+            var frames = Resources.LoadAll<Texture2D>(exercise.GifUrl);
+            if (frames != null && frames.Length != 0)
             {
-                gifBox.style.backgroundImage = new StyleBackground(loadedTexture);
+                int currentFrame = 0;
+                gifBox.style.backgroundImage = new StyleBackground(frames[0]);
                 gifBox.style.backgroundSize = new BackgroundSize(BackgroundSizeType.Cover);
                 gifBox.style.backgroundPositionX = new BackgroundPosition(BackgroundPositionKeyword.Center);
                 gifBox.style.backgroundPositionY = new BackgroundPosition(BackgroundPositionKeyword.Center);
+
+                gifBox.schedule.Execute(() =>
+                {
+                    //the % makes sure we loop back to the first frame
+                    currentFrame = (currentFrame + 1) % frames.Length;
+                    gifBox.style.backgroundImage = new StyleBackground(frames[currentFrame]);
+                }).Every(200);
             }
         }
         card.Add(gifBox);
