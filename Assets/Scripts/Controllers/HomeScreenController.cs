@@ -444,7 +444,7 @@ public class HomeScreenController : MonoBehaviour
         if (!string.IsNullOrEmpty(exercise.GifUrl))
         {
             var frames = Resources.LoadAll<Texture2D>(exercise.GifUrl);
-            if (frames != null && frames.Length != 0)
+            if (frames is { Length: > 0 })
             {
                 int currentFrame = 0;
                 gifBox.style.backgroundImage = new StyleBackground(frames[0]);

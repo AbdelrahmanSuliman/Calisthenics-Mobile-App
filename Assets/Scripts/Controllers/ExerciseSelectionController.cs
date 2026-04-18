@@ -31,6 +31,7 @@ public class ExerciseSelectionController : MonoBehaviour
         var root = GetComponent<UIDocument>().rootVisualElement;
         
         _exerciseScrollView = root.Q<ScrollView>("ExerciseScrollView");
+        _exerciseScrollView.style.paddingTop = 100;
         _confirmAddBtn = root.Q<Button>("ConfirmAddButton");
 
         if (_confirmAddBtn == null) return;
@@ -55,15 +56,13 @@ public class ExerciseSelectionController : MonoBehaviour
             foreach (DocumentSnapshot doc in task.Result.Documents)
             {
                 SkillPathModel path = doc.ConvertTo<SkillPathModel>();
-                
-                if (path.Exercises != null && path.Exercises.Count > 0)
-                {
-                    ExerciseModel firstExercise = path.Exercises.Find(ex => ex.Order == 1);
+
+                if (path.Exercises is not { Count: > 0 }) continue;
+                ExerciseModel firstExercise = path.Exercises.Find(ex => ex.Order == 1);
                     
-                    if (firstExercise != null)
-                    {
-                        _exerciseScrollView.Add(CreateExerciseCard(path, firstExercise));
-                    }
+                if (firstExercise != null)
+                {
+                    _exerciseScrollView.Add(CreateExerciseCard(path, firstExercise));
                 }
             }
         });
@@ -73,7 +72,7 @@ public class ExerciseSelectionController : MonoBehaviour
     {
         Button cardBtn = new Button
         {
-            text = $"[{path.PathType}]\n{exercise.Name}\n\n{exercise.Description}",
+            text = "",
             style =
             {
                 backgroundColor = new StyleColor(new Color(0.89f, 0.3f, 0.4f)),
@@ -84,14 +83,45 @@ public class ExerciseSelectionController : MonoBehaviour
                 marginTop = 32,
                 whiteSpace = WhiteSpace.Normal,
                 fontSize = 32,
-                flexShrink = 0
+                flexShrink = 0,
+                flexDirection = FlexDirection.Column, 
+                paddingTop = 0, paddingBottom = 0, paddingLeft = 0, paddingRight = 0,
+                overflow = Overflow.Hidden
             }
         };
-
-        cardBtn.style.marginTop = 60; 
-        cardBtn.style.marginRight = 32;
-        cardBtn.style.marginLeft = 32;
-        cardBtn.style.marginBottom = 32;
+        
+        VisualElement gifBox = new VisualElement
+        {
+            style = { height = 400, width = Length.Percent(100)}
+        };
+        cardBtn.Add(gifBox);
+        
+        var frames = Resources.LoadAll<Texture2D>(exercise.GifUrl);
+        if (frames is { Length: > 0 })
+        {
+            int currentFrame = 0;
+            gifBox.style.backgroundImage = new StyleBackground(frames[0]);
+            gifBox.style.backgroundSize = new BackgroundSize(BackgroundSizeType.Cover);
+            gifBox.style.backgroundPositionX = new BackgroundPosition(BackgroundPositionKeyword.Center);
+            gifBox.style.backgroundPositionY = new BackgroundPosition(BackgroundPositionKeyword.Center);
+            
+            
+            gifBox.schedule.Execute(() =>
+            {
+                currentFrame = (currentFrame + 1) % frames.Length;
+                gifBox.style.backgroundImage = new StyleBackground(frames[currentFrame]);
+            }).Every(200);
+        }
+        
+        Label titleLabel = new Label($"[{path.PathType}]\n{exercise.Name}")
+        {
+            style =
+            {
+                fontSize = 32, color = Color.white, whiteSpace = WhiteSpace.Normal,
+                unityTextAlign = TextAnchor.MiddleCenter, marginTop = 60 
+            }
+        };
+        cardBtn.Add(titleLabel);
 
         cardBtn.clicked += () =>
         {
