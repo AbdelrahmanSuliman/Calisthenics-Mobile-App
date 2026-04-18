@@ -1,3 +1,4 @@
+using System;
 using Firebase.Auth;
 using Firebase.Extensions;
 using Firebase.Firestore;
@@ -11,26 +12,22 @@ public class AuthController : MonoBehaviour
     private FirebaseFirestore _db;
 
     private UIDocument _uiDoc;
-    private void OnEnable()
+
+
+    //make sure to initialize these only once 
+    private void Awake()
     {
-        
-        //initialize firebase
         _auth = FirebaseManager.Instance.Auth;
         _db = FirebaseManager.Instance.Db;
-
-        //grab the UI manager component
         _uiManager = GetComponent<UIManager>();
         _uiDoc = GetComponent<UIDocument>();
+    }
+
+    //initialize on page load because we need it to resubscribe to events
+    private void OnEnable()
+    {
 
         var root = _uiDoc.rootVisualElement;
-        
-        //grab our credentials
-        var signupUsernameInput = root.Q<TextField>("SignupUsernameInput");
-        var signupEmailInput = root.Q<TextField>("SignupEmailInput");
-        var signupPasswordInput = root.Q<TextField>("SignupPasswordInput");
-
-        var loginEmailInput = root.Q<TextField>("LoginEmailInput");
-        var loginPasswordInput = root.Q<TextField>("LoginPasswordInput");
         
         //access buttons
         var signupBtn = root.Q<Button>("SignUpConfirm");
@@ -48,21 +45,11 @@ public class AuthController : MonoBehaviour
         if (loginErrorMessage != null) loginErrorMessage.pickingMode = PickingMode.Ignore;
 
         //Add logic to buttons
-        signupBtn.clicked += () =>
-        {
-            SignUp(signupEmailInput.value, signupPasswordInput.value, signupUsernameInput.value, signupErrorMessage);
-        };
+        signupBtn.clicked += HandleSignup;
 
-        loginBtn.clicked += () =>
-        {
-            LogIn(loginEmailInput.value, loginPasswordInput.value, loginErrorMessage);
-        };
+        loginBtn.clicked += HandleLogin;
 
-        redirectBtnSignup.clicked += () =>
-        {
-            ClearTextFields();
-            _uiManager.OpenLoginPage();
-        };
+        redirectBtnSignup.clicked += OnRedirectToLogin;
         
         if (redirectBtnLogin != null)
         {
@@ -203,16 +190,44 @@ public class AuthController : MonoBehaviour
         root.Q<Label>("SignupErrorMessage").text = "";
         root.Q<Label>("LoginErrorMessage").text = "";
     }
-        
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    
+    private void HandleSignup() 
     {
-        
+        var root = _uiDoc.rootVisualElement;
+        var email = root.Q<TextField>("SignupEmailInput").value;
+        var pass = root.Q<TextField>("SignupPasswordInput").value;
+        var user = root.Q<TextField>("SignupUsernameInput").value;
+        var error = root.Q<Label>("SignupErrorMessage");
+
+        SignUp(email, pass, user, error);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void HandleLogin()
     {
-        
+        var root = _uiDoc.rootVisualElement;
+        var email = root.Q<TextField>("LoginEmailInput").value;
+        var pass = root.Q<TextField>("LoginPasswordInput").value;
+        var error = root.Q<Label>("LoginErrorMessage");
+
+        LogIn(email, pass, error);
     }
+    
+    private void OnRedirectToLogin()
+    {
+        ClearTextFields();
+        _uiManager.OpenLoginPage();
+    }
+
+    private void OnDisable()
+    {
+        var root = _uiDoc.rootVisualElement;
+        if (root == null) return;
+
+        var signupBtn = root.Q<Button>("SignUpConfirm");
+        if (signupBtn != null) signupBtn.clicked -= HandleSignup;
+
+        var loginBtn = root.Q<Button>("LoginConfirm");
+        if (loginBtn != null) loginBtn.clicked -= HandleLogin;
+    }
+
 }

@@ -21,12 +21,16 @@ public class ExerciseSelectionController : MonoBehaviour
     private SkillPathModel _selectedPath;
     private ExerciseModel _selectedExercise;
 
-    private void OnEnable()
+    
+    private void Awake()
     {
-        _exerciseCount = 0;
         _db = FirebaseManager.Instance.Db;
         _auth = FirebaseManager.Instance.Auth;
         _uiManager = GetComponent<UIManager>();
+    }
+    private void OnEnable()
+    {
+        _exerciseCount = 0;
 
         var root = GetComponent<UIDocument>().rootVisualElement;
         
@@ -183,6 +187,12 @@ public class ExerciseSelectionController : MonoBehaviour
             });
         });
 
+    }
+    
+    private void OnDisable()
+    {
+        if (_confirmAddBtn != null)
+            _confirmAddBtn.clicked -= AddSelectedExerciseToProfile;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

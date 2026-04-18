@@ -28,22 +28,27 @@ public class HomeScreenController : MonoBehaviour
     private Button _closeFaqButton;
     private VisualElement _faqContainer;
     private VisualElement _faqScrollView;
+
+    private Button _faqButton;
+    private Button _signOutBtn;
+
+    private Button _pushNode;
+    private Button _pullNode;
+    private Button _legsNode;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
-       
+        _db = FirebaseManager.Instance.Db;
+        _auth = FirebaseManager.Instance.Auth;
+        _uiManager = GetComponent<UIManager>();
     }
 
     private void OnEnable()
     {
-        _db = FirebaseManager.Instance.Db;
-        _auth = FirebaseManager.Instance.Auth;
 
-        _uiManager = GetComponent<UIManager>();
-        // preload all data we need
+        // preload all data we need 
         LoadExercises();
-        
         
         //make sure UI components are built beforehand
         BuildRoadMapPopup();
@@ -52,12 +57,12 @@ public class HomeScreenController : MonoBehaviour
         var uiDoc = GetComponent<UIDocument>();
 
         var root = uiDoc.rootVisualElement;
-        var pushNode = root.Q<Button>("PushNode");
-        var pullNode = root.Q<Button>("PullNode");
-        var legsNode = root.Q<Button>("LegsNode");
+        _pushNode = root.Q<Button>("PushNode");
+        _pullNode = root.Q<Button>("PullNode");
+        _legsNode = root.Q<Button>("LegsNode");
 
-        var signOutBtn = root.Q<Button>("SignOutButton");
-        var faqButton = root.Q<Button>("OpenFAQButton");
+        _signOutBtn = root.Q<Button>("SignOutButton");
+        _faqButton = root.Q<Button>("OpenFAQButton");
         _closeFaqButton = root.Q<Button>("CloseFAQButton");
         _faqScrollView = root.Q<ScrollView>("FAQScroll");
         _faqContainer = root.Q<VisualElement>("FAQMenu");
@@ -66,29 +71,13 @@ public class HomeScreenController : MonoBehaviour
         BuildFaqMenu();
         
 
-        faqButton.clicked += () =>
-        {
-            _faqContainer.style.display = DisplayStyle.Flex;
-            _faqScrollView.style.display = DisplayStyle.Flex;
-        };
+        _faqButton.clicked += OnFaqOpen;
+        _closeFaqButton.clicked += OnFaqClose;
+        _signOutBtn.clicked += OnSignOut;
 
-        _closeFaqButton.clicked += () =>
-        {
-            _faqContainer.style.display = DisplayStyle.None;
-        };
-
-        signOutBtn.clicked += () =>
-        {
-            _auth.SignOut();
-            _currentOpenPath = "";
-            _activePopup.style.display = DisplayStyle.None;
-            _logsPopup.style.display = DisplayStyle.None;
-            _uiManager.OpenSignupPage();
-        };
-
-        pushNode.clicked += () => PopulateRoadMapPopup("PUSH");
-        pullNode.clicked += () => PopulateRoadMapPopup("PULL");
-        legsNode.clicked += () => PopulateRoadMapPopup("LEGS");
+        _pushNode.clicked += OnPushClicked;
+        _pullNode.clicked += OnPullClicked;
+        _legsNode.clicked += OnLegsClicked;
     }
 
 
@@ -732,7 +721,53 @@ public class HomeScreenController : MonoBehaviour
         return inputContainer;
     }
     
-   
+    
+    private void OnFaqOpen()
+    {
+        _faqContainer.style.display = DisplayStyle.Flex;
+        _faqScrollView.style.display = DisplayStyle.Flex;
+    }
+
+    private void OnFaqClose()
+    {
+        _faqContainer.style.display = DisplayStyle.None;
+    }
+
+    private void OnSignOut()
+    {
+        _auth.SignOut();
+        _currentOpenPath = "";
+        _activePopup.style.display = DisplayStyle.None;
+        _logsPopup.style.display = DisplayStyle.None;
+        _uiManager.OpenSignupPage();
+    }
+
+    private void OnPushClicked()
+    {
+        PopulateRoadMapPopup("PUSH");
+    }
+
+    private void OnPullClicked()
+    {
+        PopulateRoadMapPopup("PULL");
+    }
+
+    private void OnLegsClicked()
+    {
+        PopulateRoadMapPopup("LEGS");
+    }
+
+    private void OnDisable()
+    {
+        _faqButton.clicked -= OnFaqOpen;
+        _closeFaqButton.clicked -= OnFaqClose;
+        _signOutBtn.clicked -= OnSignOut;
+
+        _pushNode.clicked -= OnPushClicked;
+        _pullNode.clicked -= OnPullClicked;
+        _legsNode.clicked -= OnLegsClicked;
+    }
+
 
     private void LoadExercises()
     {
