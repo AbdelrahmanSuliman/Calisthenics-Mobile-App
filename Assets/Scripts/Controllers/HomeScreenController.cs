@@ -23,6 +23,11 @@ public class HomeScreenController : MonoBehaviour
     private VisualElement _logsPopup;
     private Label _logsTitleLabel;
     private ScrollView _logsContainer;
+
+
+    private Button _closeFaqButton;
+    private VisualElement _faqContainer;
+    private VisualElement _faqScrollView;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -52,6 +57,25 @@ public class HomeScreenController : MonoBehaviour
         var legsNode = root.Q<Button>("LegsNode");
 
         var signOutBtn = root.Q<Button>("SignOutButton");
+        var faqButton = root.Q<Button>("OpenFAQButton");
+        _closeFaqButton = root.Q<Button>("CloseFAQButton");
+        _faqScrollView = root.Q<ScrollView>("FAQScroll");
+        _faqContainer = root.Q<VisualElement>("FAQMenu");
+        
+        _faqScrollView.Clear(); 
+        BuildFaqMenu();
+        
+
+        faqButton.clicked += () =>
+        {
+            _faqContainer.style.display = DisplayStyle.Flex;
+            _faqScrollView.style.display = DisplayStyle.Flex;
+        };
+
+        _closeFaqButton.clicked += () =>
+        {
+            _faqContainer.style.display = DisplayStyle.None;
+        };
 
         signOutBtn.clicked += () =>
         {
@@ -147,6 +171,83 @@ public class HomeScreenController : MonoBehaviour
         });
 }
 
+
+    private void BuildFaqMenu()
+    {
+        
+        _faqScrollView.Add(CreateFaqItem("How do I unlock new exercises?", 
+            "The app uses a lock-step progression system. You must log at least 8 reps in your current exercise to unlock the next one in the tree. Once the threshold is met, the next node will turn Orange."));
+
+        _faqScrollView.Add(CreateFaqItem("What do the card colors mean?", 
+            "GREY: Locked. Complete previous exercises first.\nORANGE: In Progress. This is your current target.\nGREEN: Completed. You have mastered this movement."));
+
+        _faqScrollView.Add(CreateFaqItem("How do I log my workouts?", 
+            "Tap on any Orange or Green exercise card to open its history. Scroll to the bottom of the logs to find the input field, enter your reps, and tap 'Save Logs'."));
+
+        _faqScrollView.Add(CreateFaqItem("Why can't I tap some cards?", 
+            "Only 'In Progress' and 'Completed' exercises are interactive. Locked exercises cannot be opened until you satisfy the rep requirements of the preceding movement."));
+
+        _faqScrollView.Add(CreateFaqItem("What are the three main paths?", 
+            "PUSH: Focuses on chest, shoulders, and triceps (e.g., Pushups).\nPULL: Focuses on back and biceps (e.g., Pullups).\nLEGS: Focuses on quads, glutes, and hamstrings (e.g., Squats)."));
+
+        _faqScrollView.Add(CreateFaqItem("Can I see my past performance?", 
+            "Yes. Tapping an exercise card shows a chronological list of every set you have ever saved for that specific movement, including dates and rep counts."));
+
+    }
+    
+    private VisualElement CreateFaqItem(string question, string answer)
+    {
+        var item = new VisualElement
+        {
+            style =
+            {
+                marginBottom = 20
+            }
+        };
+
+        var qBtn = new Button
+        {
+            text = $"▶  {question}",
+            style =
+            {
+                backgroundColor = new Color(0.18f, 0.18f, 0.18f),
+                fontSize = 35,
+                unityTextAlign = TextAnchor.MiddleLeft,
+                height = 100,
+                borderTopLeftRadius = 15,
+                borderTopRightRadius = 15,
+                borderBottomLeftRadius = 15,
+                borderBottomRightRadius = 15
+            }
+        };
+
+        var aLabel = new Label(answer)
+        {
+            style =
+            {
+                display = DisplayStyle.None,
+                paddingLeft = 40,
+                paddingTop = 20,
+                paddingBottom = 20,
+                fontSize = 30,
+                color = new Color(0.8f, 0.8f, 0.8f),
+                whiteSpace = WhiteSpace.Normal
+            }
+        };
+
+        qBtn.clicked += () =>
+        {
+            bool isHidden = aLabel.style.display == DisplayStyle.None;
+            aLabel.style.display = isHidden ? DisplayStyle.Flex : DisplayStyle.None;
+            qBtn.text = isHidden ? $"▼  {question}" : $"▶  {question}";
+        
+            qBtn.style.backgroundColor = isHidden ? new Color(0.25f, 0.25f, 0.25f) : new Color(0.18f, 0.18f, 0.18f);
+        };
+
+        item.Add(qBtn);
+        item.Add(aLabel);
+        return item;
+    }
  
     //this runs only once and makes sure the roadmap popup is built
     private void BuildRoadMapPopup()
